@@ -9,9 +9,11 @@ let services = []
 const cart = []
 let currentCurrency = "SAR"
 const orders = []
+let currentUser = null
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[v0] App initializing...")
+  initializeGoogleSignIn()
   loadAllData()
   initializeTheme()
   renderPlatforms()
@@ -19,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners()
   updateCart()
   setupFilters()
+  loadUserSession()
   console.log("[v0] App initialized successfully")
 })
 
@@ -289,6 +292,7 @@ function setupEventListeners() {
   const cartModal = document.getElementById("cart-modal")
   const cartBtn = document.getElementById("cart-btn")
   const closeModal = document.querySelector(".close-modal")
+  const logoutBtn = document.getElementById("logout-btn")
 
   if (cartBtn) {
     cartBtn.addEventListener("click", (e) => {
@@ -309,6 +313,10 @@ function setupEventListeners() {
         cartModal.classList.remove("active")
       }
     })
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout)
   }
 
   const checkoutBtn = document.getElementById("checkout-btn")
@@ -358,6 +366,82 @@ function showNotification(message) {
       notification.remove()
     }, 300)
   }, 3000)
+}
+
+function initializeGoogleSignIn() {
+  try {
+    window.google.accounts.id.initialize({
+      client_id: "963159648607-oa0fp52eo6n5p1o8kqvf5v3e4o5p6k7l.apps.googleusercontent.com",
+      callback: handleSignIn,
+    })
+
+    window.google.accounts.id.renderButton(document.getElementById("google-signin-button"), {
+      theme: "dark",
+      size: "large",
+      text: "signin_with",
+      locale: "ar",
+    })
+
+    window.google.accounts.id.prompt()
+  } catch (e) {
+    console.log("[v0] Google Sign-In initialization skipped")
+  }
+}
+
+function handleSignIn(response) {
+  const base64Url = response.credential.split(".")[1]
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/")
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map((c) => {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+      })
+      .join(""),
+  )
+
+  const decodedToken = JSON.parse(jsonPayload)
+  currentUser = {
+    id: decodedToken.sub,
+    name: decodedToken.name,
+    email: decodedToken.email,
+    photo: decodedToken.picture,
+  }
+
+  localStorage.setItem("currentUser", JSON.stringify(currentUser))
+  localStorage.setItem("lastCustomerEmail", currentUser.email)
+  updateUserUI()
+}
+
+function loadUserSession() {
+  const savedUser = localStorage.getItem("currentUser")
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser)
+    updateUserUI()
+  }
+}
+
+function updateUserUI() {
+  const loginContainer = document.getElementById("login-container")
+  const userAccount = document.getElementById("user-account")
+
+  if (currentUser) {
+    loginContainer.classList.add("hidden")
+    userAccount.classList.remove("hidden")
+    document.getElementById("user-name").textContent = currentUser.name
+    document.getElementById("user-email").textContent = currentUser.email
+    document.getElementById("user-photo").src = currentUser.photo
+  } else {
+    loginContainer.classList.remove("hidden")
+    userAccount.classList.add("hidden")
+  }
+}
+
+function logout() {
+  currentUser = null
+  localStorage.removeItem("currentUser")
+  updateUserUI()
+  window.location.reload()
 }
 
 console.log("[v0] App script loaded successfully")

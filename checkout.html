@@ -248,68 +248,79 @@
 
         <section class="checkout-section">
             <div class="checkout-container">
-                <!-- Checkout Form -->
-                <form id="checkout-form" class="checkout-form">
-                    <h2>بيانات الطلب</h2>
-
-                    <div class="form-group">
-                        <label>الاسم الكامل *</label>
-                        <input type="text" id="name" placeholder="أدخل اسمك الكامل" required>
+                <!-- Added login check message -->
+                <div id="login-required" class="login-required-message" style="display: none;">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lock"></i>
+                        <p>يجب تسجيل الدخول أولاً لإكمال عملية الشراء</p>
+                        <a href="index.html" class="btn btn-primary">العودة للرئيسية</a>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label>البريد الإلكتروني *</label>
-                        <input type="email" id="email" placeholder="your@email.com" required>
-                    </div>
+                <div id="checkout-content" style="display: contents;">
+                    <!-- Checkout Form -->
+                    <form id="checkout-form" class="checkout-form">
+                        <h2>بيانات الطلب</h2>
 
-                    <div class="form-group">
-                        <label>رقم الهاتف *</label>
-                        <input type="tel" id="phone" placeholder="+966 5X XXX XXXX" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>الدولة *</label>
-                        <select id="country" required>
-                            <option value="">اختر الدولة</option>
-                            <option value="السعودية">السعودية</option>
-                            <option value="الإمارات">الإمارات</option>
-                            <option value="عمان">عمان</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
-                    </div>
-
-                    <div class="payment-methods-group">
-                        <h3>طرق الدفع المتاحة</h3>
-                        <div id="paymentMethods"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary" style="width: 100%;">
-                        <i class="fas fa-credit-card"></i> إتمام الطلب
-                    </button>
-                </form>
-
-                <!-- Checkout Summary -->
-                <div class="checkout-summary">
-                    <h3>ملخص الطلب</h3>
-                    <div id="summary-items"></div>
-
-                    <div class="summary-divider"></div>
-
-                    <div class="currency-selector">
-                        <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">العملة:</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="currency-btn active" data-currency="SAR">﷼ SAR</button>
-                            <button class="currency-btn" data-currency="AED">د.إ AED</button>
-                            <button class="currency-btn" data-currency="USD">$ USD</button>
-                            <button class="currency-btn" data-currency="OMR">ر.ع OMR</button>
+                        <div class="form-group">
+                            <label>الاسم الكامل *</label>
+                            <input type="text" id="name" placeholder="أدخل اسمك الكامل" required>
                         </div>
-                    </div>
 
-                    <div class="summary-divider"></div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني *</label>
+                            <input type="email" id="email" placeholder="your@email.com" required>
+                        </div>
 
-                    <div class="summary-total">
-                        <span>الإجمالي:</span>
-                        <span id="totalPrice">0</span>
+                        <div class="form-group">
+                            <label>رقم الهاتف *</label>
+                            <input type="tel" id="phone" placeholder="+966 5X XXX XXXX" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>الدولة *</label>
+                            <select id="country" required>
+                                <option value="">اختر الدولة</option>
+                                <option value="السعودية">السعودية</option>
+                                <option value="الإمارات">الإمارات</option>
+                                <option value="عمان">عمان</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+
+                        <div class="payment-methods-group">
+                            <h3>طرق الدفع المتاحة</h3>
+                            <div id="paymentMethods"></div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%;">
+                            <i class="fas fa-credit-card"></i> إتمام الطلب
+                        </button>
+                    </form>
+
+                    <!-- Checkout Summary -->
+                    <div class="checkout-summary">
+                        <h3>ملخص الطلب</h3>
+                        <div id="summary-items"></div>
+
+                        <div class="summary-divider"></div>
+
+                        <div class="currency-selector">
+                            <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">العملة:</p>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="currency-btn active" data-currency="SAR">﷼ SAR</button>
+                                <button class="currency-btn" data-currency="AED">د.إ AED</button>
+                                <button class="currency-btn" data-currency="USD">$ USD</button>
+                                <button class="currency-btn" data-currency="OMR">ر.ع OMR</button>
+                            </div>
+                        </div>
+
+                        <div class="summary-divider"></div>
+
+                        <div class="summary-total">
+                            <span>الإجمالي:</span>
+                            <span id="totalPrice">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
