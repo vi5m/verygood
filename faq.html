@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأسئلة الشائعة - متجر الخدمات</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .faq-section { padding: 4rem 0; }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(255, 149, 0, 0.2);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(255, 149, 0, 0.05);
+            color: var(--primary-color);
+        }
+
+        .faq-question i {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 1.5rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .faq-answer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer strong {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .faq-section { padding: 2rem 0; }
+            .faq-question { padding: 1rem; }
+            .faq-answer { padding: 1rem; }
+            .faq-header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <i class="fas fa-rocket"></i>
+                <span>متجر الخدمات</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="index.html#services" class="nav-link">الخدمات</a></li>
+                <li><a href="about.html" class="nav-link">عن المتجر</a></li>
+                <li><a href="contact.html" class="nav-link">اتصل بنا</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="admin.html" class="admin-link" title="لوحة التحكم">
+                    <i class="fas fa-shield-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FAQ Content -->
+    <div class="container faq-section">
+        <div class="faq-header">
+            <h1>الأسئلة الشائعة</h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">إجابات على أكثر الأسئلة المتكررة لدينا</p>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>كيف أشتري الخدمات؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p><strong>1. اختر الخدمة:</strong> تصفح قسم الخدمات واختر ما يناسبك</p>
+                    <p><strong>2. أضف للسلة:</strong> اضغط على "أضف للسلة"</p>
+                    <p><strong>3. افتح السلة:</strong> اضغط على أيقونة السلة في الأعلى</p>
+                    <p><strong>4. ادفع:</strong> اتبع خطوات الدفع الآمنة</p>
+                    <p><strong>5. انتظر:</strong> ستبدأ الخدمة بالتنفيذ فوراً!</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>كيف أتواصل مع فريق الدعم؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>يمكنك التواصل معنا بطرق متعددة:</p>
+                    <p><strong>WhatsApp:</strong> <a href="https://wa.me/970594569011" style="color: var(--primary-color);">+970594569011</a></p>
+                    <p><strong>البريد:</strong> info@services.com</p>
+                    <p><strong>الهاتف:</strong> +970594569011</p>
+                    <p>نرد على جميع الاستفسارات في أسرع وقت ممكن!</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>هل الخدمات آمنة 100%؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>نعم، جميع خدماتنا آمنة وموثوقة 100%!</p>
+                    <p>نستخدم أحدث الطرق والتقنيات لضمان سلامة حسابك الكامل</p>
+                    <p>جميع البيانات محمية ومشفرة بأعلى معايير الأمان</p>
+                    <p>لديك ضمان استرجاع المبلغ إذا لم تنل الخدمة رضاك</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>ما هي طرق الدفع المتاحة؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>نقبل الدفع عبر طرق آمنة وموثوقة:</p>
+                    <p><strong>1. Like Card</strong> - دفع ببطاقة آمن وسريع</p>
+                    <p><strong>2. التحويل البنكي</strong> - للدول المدعومة</p>
+                    <p><strong>العملات المدعومة:</strong> ريال سعودي • درهم إماراتي • دولار أمريكي • ريال عماني</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>ما هو وقت تنفيذ الخدمة؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>معظم الخدمات تنفذ بسرعة كبيرة!</p>
+                    <p><strong>الخدمات السريعة:</strong> تنفذ في دقائق بعد الدفع</p>
+                    <p><strong>الخدمات العادية:</strong> قد تستغرق ساعات قليلة حسب النوع</p>
+                    <p>سيتم إخطارك برسالة عند اكتمال الطلب بنجاح</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>هل هناك ضمان لاسترجاع المبلغ؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>نعم! لدينا سياسة ضمان قوية وشاملة</p>
+                    <p>إذا لم تنال الخدمة رضاك، اتصل بنا خلال 48 ساعة</p>
+                    <p>سنحاول حل المشكلة أو استرجاع المبلغ كاملاً</p>
+                    <p>رضاك هو أولويتنا الأولى دائماً!</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>هل يمكن شراء خدمات متعددة معاً؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>بالطبع! يمكنك إضافة عدة خدمات دفعة واحدة</p>
+                    <p>ستحصل على فاتورة واحدة بجميع الخدمات</p>
+                    <p>جميع الخدمات ستبدأ في التنفيذ بعد الدفع مباشرة</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>ماذا لو لم أستقبل الخدمة؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>إذا لم تستقبل الخدمة خلال الوقت المتفق عليه:</p>
+                    <p><strong>1.</strong> انتظر قليلاً وتحقق من حسابك</p>
+                    <p><strong>2.</strong> اتصل بنا عبر WhatsApp برقم الطلب</p>
+                    <p><strong>3.</strong> سنحقق في المشكلة وحلها فوراً</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>هل هناك خصومات على الطلبات الكبيرة؟</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>نعم! نقدم خصومات ممتازة للطلبات الكبيرة</p>
+                    <p>تواصل معنا عبر WhatsApp لمناقشة خصومات مخصصة</p>
+                    <p>يمكن أن نقدم أسعاراً خاصة جداً للعملاء المنتظمين</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 4rem;">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>تواصل معنا</h4>
+                <p>WhatsApp: <a href="https://wa.me/970594569011">+970594569011</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="about.html">عن المتجر</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 متجر الخدمات. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        initializeTheme()
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem("theme") || "dark"
+            if (savedTheme === "light") {
+                document.body.classList.add("light-mode")
+                updateThemeIcon()
+            }
+            document.getElementById("theme-toggle").addEventListener("click", toggleTheme)
+        }
+        function toggleTheme() {
+            document.body.classList.toggle("light-mode")
+            const isDark = !document.body.classList.contains("light-mode")
+            localStorage.setItem("theme", isDark ? "dark" : "light")
+            updateThemeIcon()
+        }
+        function updateThemeIcon() {
+            const icon = document.getElementById("theme-toggle").querySelector("i")
+            const isDark = !document.body.classList.contains("light-mode")
+            icon.className = isDark ? "fas fa-moon" : "fas fa-sun"
+        }
+
+        document.querySelectorAll(".faq-question").forEach((question) => {
+            question.addEventListener("click", () => {
+                const item = question.parentElement
+                item.classList.toggle("active")
+            })
+        })
+    </script>
+</body>
+</html>

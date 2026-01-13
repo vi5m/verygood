@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="منصة قوية لبيع خدمات التواصل الاجتماعي - TikTok, Instagram, Facebook وأكثر">
+    <title>متجر خدمات الوسائط - Social Media Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <i class="fas fa-rocket"></i>
+                <span>متجر الخدمات</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">الرئيسية</a></li>
+                <li><a href="#services" class="nav-link">الخدمات</a></li>
+                <li><a href="about.html" class="nav-link">عن المتجر</a></li>
+                <li><a href="contact.html" class="nav-link">اتصل بنا</a></li>
+                <li><a href="faq.html" class="nav-link">الأسئلة الشائعة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="#" id="cart-btn" class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </a>
+                <a href="admin.html" class="admin-link" title="لوحة التحكم">
+                    <i class="fas fa-shield-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container" style="display: contents;">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-highlight">اشحن حسابك</span>
+                    <span class="title-main">بخدمات احترافية</span>
+                </h1>
+                <p class="hero-subtitle">منصتك الموثوقة لبيع خدمات التواصل الاجتماعي - آمنة وسريعة وموثوقة</p>
+                <button class="cta-button">ابدأ الآن</button>
+            </div>
+            <div class="hero-visual">
+                <img src="/images/img-20260113-wa0003.jpg" alt="خدمات">
+            </div>
+        </div>
+    </section>
+
+    <!-- Platforms Section -->
+    <section class="platforms-showcase" id="platforms">
+        <div class="container">
+            <h2 class="section-title">منصاتنا المدعومة</h2>
+            <div class="platforms-grid" id="platforms-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <h2 class="section-title">الخدمات المتاحة</h2>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">الكل</button>
+                <div id="platform-filters"></div>
+            </div>
+            <div class="services-grid" id="services-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Methods Section -->
+    <section class="payment-methods">
+        <div class="container">
+            <h2 class="section-title">طرق الدفع الآمنة</h2>
+            <div class="payment-grid">
+                <div class="payment-card">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>بطاقة الائتمان</h3>
+                    <p>Like Card - دفع آمن وسريع وموثوق</p>
+                </div>
+                <div class="payment-card">
+                    <i class="fas fa-university"></i>
+                    <h3>التحويل البنكي</h3>
+                    <p>السعودية • الإمارات • عمان</p>
+                </div>
+                <div class="payment-card">
+                    <i class="fas fa-wallet"></i>
+                    <h3>العملات المدعومة</h3>
+                    <p>ريال سعودي • درهم إماراتي • دولار</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>سلة التسوق</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="cart-items" class="cart-items">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>المجموع:</span>
+                    <span id="cart-total">0 SAR</span>
+                </div>
+            </div>
+            <button id="checkout-btn" class="checkout-button">الذهاب للدفع</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>تواصل معنا</h4>
+                <p>WhatsApp: <a href="https://wa.me/970594569011">+970594569011</a></p>
+                <p>قناة WhatsApp: <a href="https://whatsapp.com/channel/0029VbCXW248qIzki3MIvE44" target="_blank">اتبعنا</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#services">الخدمات</a></li>
+                    <li><a href="about.html">عن المتجر</a></li>
+                    <li><a href="contact.html">اتصل بنا</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>المزيد</h4>
+                <ul>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 متجر الخدمات. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

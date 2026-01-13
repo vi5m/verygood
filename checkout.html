@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدفع - متجر الخدمات</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            padding: 2rem 0;
+            min-height: 600px;
+        }
+
+        .checkout-form {
+            background: var(--border-color);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 184, 0, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .payment-methods-group {
+            margin-bottom: 2rem;
+        }
+
+        .payment-methods-group h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .payment-option {
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 184, 0, 0.05);
+        }
+
+        .payment-option input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkout-summary {
+            background: var(--border-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .summary-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .summary-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .currency-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .currency-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 0.5rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            color: var(--text-dark);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .currency-btn.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: var(--bg-dark);
+        }
+
+        .pay-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: auto;
+        }
+
+        .pay-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.3);
+        }
+
+        .pay-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-summary {
+                position: static;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <i class="fas fa-rocket"></i>
+                <span>متجر الخدمات</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="index.html#services" class="nav-link">الخدمات</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="index.html" class="cart-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin: 2rem 0 1rem; text-align: center; font-size: 2.5rem;">
+            <span style="color: var(--primary-color);">إتمام</span> الطلب
+        </h1>
+
+        <div class="checkout-container">
+            <!-- Checkout Form -->
+            <form class="checkout-form" id="checkout-form">
+                <h2 style="margin-bottom: 2rem; color: var(--primary-color);">بيانات العميل</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">الاسم الكامل *</label>
+                        <input type="text" id="name" name="name" required placeholder="أدخل اسمك الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني *</label>
+                        <input type="email" id="email" name="email" required placeholder="example@email.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+966 XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="country">الدولة *</label>
+                        <select id="country" name="country" required>
+                            <option value="">اختر دولة</option>
+                            <option value="SA">السعودية</option>
+                            <option value="AE">الإمارات العربية المتحدة</option>
+                            <option value="OM">سلطنة عمان</option>
+                            <option value="KW">الكويت</option>
+                            <option value="QA">قطر</option>
+                            <option value="BH">البحرين</option>
+                            <option value="Other">دول أخرى</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>العملة *</label>
+                    <div class="currency-selector">
+                        <button type="button" class="currency-btn active" data-currency="SAR">ر.س</button>
+                        <button type="button" class="currency-btn" data-currency="AED">د.إ</button>
+                        <button type="button" class="currency-btn" data-currency="USD">$</button>
+                        <button type="button" class="currency-btn" data-currency="OMR">ر.ع</button>
+                    </div>
+                </div>
+
+                <h2 style="margin: 2rem 0 1rem; color: var(--primary-color);">طريقة الدفع</h2>
+
+                <div class="payment-methods-group">
+                    <div class="payment-option">
+                        <input type="radio" id="like-card" name="payment-method" value="like-card" checked>
+                        <label for="like-card" style="flex: 1; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-credit-card"></i>
+                            Like Card
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="bank-transfer" name="payment-method" value="bank-transfer">
+                        <label for="bank-transfer" style="flex: 1; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-university"></i>
+                            تحويل بنكي
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">ملاحظات إضافية</label>
+                    <textarea id="notes" name="notes" style="resize: vertical; min-height: 80px; width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);" placeholder="أي ملاحظات أو تعليمات خاصة..."></textarea>
+                </div>
+            </form>
+
+            <!-- Order Summary -->
+            <div class="checkout-summary">
+                <div class="summary-title">ملخص الطلب</div>
+
+                <div class="summary-items" id="summary-items">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <div class="summary-total">
+                    <span>الإجمالي:</span>
+                    <span id="summary-total">0 SAR</span>
+                </div>
+
+                <button type="submit" form="checkout-form" class="pay-button" id="pay-button">
+                    <i class="fas fa-lock"></i> إتمام الدفع
+                </button>
+
+                <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">
+                    <i class="fas fa-shield-alt"></i> دفع آمن ومحمي
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 4rem;">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>تواصل معنا</h4>
+                <p>WhatsApp: <a href="https://wa.me/970594569011">+970594569011</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="contact.html">اتصل بنا</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 متجر الخدمات. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html>
