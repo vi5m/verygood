@@ -1,530 +1,399 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - إدارة المتجر</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .admin-page { display: none; }
-        .admin-page.active { display: block !important; }
-        .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
-        .login-box { background: var(--bg-dark); padding: 3rem; border-radius: 15px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
-        .login-box h1 { text-align: center; margin-bottom: 2rem; font-size: 2rem; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .login-input { width: 100%; padding: 1rem; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark); margin-bottom: 1rem; font-size: 1rem; transition: all 0.3s; }
-        .login-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 15px rgba(255, 149, 0, 0.4); }
-        .login-btn { width: 100%; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); border: none; padding: 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.3s; box-shadow: 0 5px 20px rgba(255, 149, 0, 0.3); }
-        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 149, 0, 0.4); }
-        .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; background: var(--bg-darker); }
-        .admin-sidebar { background: var(--bg-darker); border-right: 1px solid var(--border-color); padding: 2rem 0; position: sticky; top: 0; max-height: 100vh; overflow-y: auto; }
-        .admin-sidebar-logo { text-align: center; padding: 1rem; margin-bottom: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.2rem; }
-        .admin-menu { display: flex; flex-direction: column; gap: 0.5rem; padding: 0 1rem; }
-        .admin-menu-link { padding: 0.9rem 1rem; border-radius: 8px; color: var(--text-light); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.8rem; text-decoration: none; font-size: 0.95rem; }
-        .admin-menu-link:hover { background: rgba(255, 149, 0, 0.1); color: var(--primary-color); transform: translateX(-5px); }
-        .admin-menu-link.active { background: rgba(255, 149, 0, 0.2); color: var(--primary-color); border-right: 3px solid var(--primary-color); }
-        .admin-menu-link i { width: 20px; }
-        .admin-header { background: var(--bg-dark); border-bottom: 1px solid var(--border-color); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-        .admin-title { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
-        .admin-top-actions { display: flex; gap: 1rem; align-items: center; }
-        .admin-main { display: flex; flex-direction: column; }
-        .admin-content { padding: 2rem; overflow-y: auto; flex: 1; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--bg-dark); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
-        .stat-card:hover { border-color: var(--primary-color); box-shadow: 0 10px 30px rgba(255, 149, 0, 0.1); }
-        .stat-icon { font-size: 2rem; color: var(--primary-color); background: rgba(255, 149, 0, 0.1); width: 60px; height: 60px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .stat-info h3 { color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .stat-info .stat-number { color: var(--primary-color); font-size: 1.8rem; font-weight: 700; }
-        .admin-table-container { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table thead { background: rgba(255, 149, 0, 0.1); border-bottom: 2px solid var(--border-color); }
-        .admin-table th { padding: 1rem; text-align: right; color: var(--primary-color); font-weight: 600; }
-        .admin-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-light); }
-        .admin-table tr:hover { background: rgba(255, 149, 0, 0.05); }
-        .action-buttons { display: flex; gap: 0.5rem; }
-        .btn-small { padding: 0.5rem 0.8rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.4rem; }
-        .btn-edit { background: rgba(100, 200, 255, 0.2); color: #64c8ff; }
-        .btn-edit:hover { background: rgba(100, 200, 255, 0.3); }
-        .btn-delete { background: rgba(255, 100, 100, 0.2); color: #ff6464; }
-        .btn-delete:hover { background: rgba(255, 100, 100, 0.3); }
-        .btn-approve { background: rgba(100, 255, 100, 0.2); color: #64ff64; }
-        .btn-approve:hover { background: rgba(100, 255, 100, 0.3); }
-        .btn-reject { background: rgba(255, 150, 0, 0.2); color: #ff9600; }
-        .btn-reject:hover { background: rgba(255, 150, 0, 0.3); }
-        .status-badge { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .status-pending { background: rgba(255, 200, 0, 0.2); color: #ffc800; }
-        .status-approved { background: rgba(100, 255, 100, 0.2); color: #64ff64; }
-        .status-rejected { background: rgba(255, 100, 100, 0.2); color: #ff6464; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--bg-dark); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
-        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
-        .modal-close { background: none; border: none; color: var(--text-light); font-size: 1.5rem; cursor: pointer; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark); font-size: 1rem; transition: all 0.3s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(255, 149, 0, 0.3); }
-        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3); }
-        .btn-secondary { background: var(--border-color); color: var(--text-light); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .btn-secondary:hover { background: rgba(255, 149, 0, 0.2); color: var(--primary-color); }
-        .notification { position: fixed; top: 20px; right: 20px; padding: 1.5rem; background: var(--bg-dark); border-left: 4px solid var(--primary-color); border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 2000; animation: slideIn 0.3s ease-out; }
-        .notification.success { border-left-color: #64ff64; color: #64ff64; }
-        .notification.error { border-left-color: #ff6464; color: #ff6464; }
-        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .section-title { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
-        .btn-add { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; }
-        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3); }
-
-        /* Media Queries for Responsiveness */
-        @media (max-width: 768px) {
-            .admin-layout {
-                grid-template-columns: 1fr; /* Stack sidebar and content on small screens */
-            }
-            .admin-sidebar {
-                display: none; /* Hide sidebar on small screens */
-            }
-            .admin-header {
-                flex-direction: column; /* Stack header elements */
-                gap: 1rem;
-            }
-            .admin-content {
-                padding: 1.5rem; /* Adjust padding for smaller screens */
-            }
-            .section-header {
-                flex-direction: column; /* Stack section header elements */
-                align-items: flex-start; /* Align to the start */
-            }
-            .btn-add {
-                width: 100%; /* Make add button full width */
-                justify-content: center; /* Center content */
-            }
-            .stat-card {
-                flex-direction: column; /* Stack stat card content */
-                align-items: center;
-                text-align: center;
-            }
-            .stat-icon {
-                margin-bottom: 1rem;
-            }
-            .admin-table th, .admin-table td {
-                padding: 0.75rem; /* Smaller padding for tables */
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - متجر الخدمات</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Login Page -->
-    <div id="login-page" class="admin-page active">
-        <div class="login-container">
-            <div class="login-box">
-                <h1>🔐 لوحة التحكم</h1>
-                <form id="login-form">
-                    <div class="form-group">
-                        <input type="text" id="username" class="login-input" placeholder="اسم المستخدم" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="password" class="login-input" placeholder="كلمة المرور" required>
-                    </div>
-                    <button type="submit" class="login-btn">دخول</button>
-                </form>
-            </div>
-        </div>
+  <div class="admin-wrapper">
+    <!-- Sidebar Navigation -->
+    <div class="admin-sidebar">
+      <div class="sidebar-header">
+        <h2>لوحة التحكم</h2>
+        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="dashboard">
+          <i class="fas fa-chart-line"></i> <span>لوحة البيانات</span>
+        </button>
+        <button class="nav-item" data-page="orders">
+          <i class="fas fa-shopping-cart"></i> <span>الطلبات</span>
+        </button>
+        <button class="nav-item" data-page="services">
+          <i class="fas fa-cogs"></i> <span>الخدمات</span>
+        </button>
+        <button class="nav-item" data-page="products">
+          <i class="fas fa-box"></i> <span>المنتجات</span>
+        </button>
+        <button class="nav-item" data-page="platforms">
+          <i class="fas fa-globe"></i> <span>المنصات</span>
+        </button>
+        <button class="nav-item" data-page="payments">
+          <i class="fas fa-credit-card"></i> <span>طرق الدفع</span>
+        </button>
+        <button class="nav-item" data-page="messages">
+          <i class="fas fa-envelope"></i> <span>الرسائل</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i class="fas fa-cog"></i> <span>الإعدادات</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="themeToggle" class="theme-toggle">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- Admin Dashboard -->
-    <div id="admin-page" class="admin-page">
-        <div class="admin-layout">
-            <!-- Sidebar -->
-            <div class="admin-sidebar">
-                <div class="admin-sidebar-logo">📊 الإدارة</div>
-                <div class="admin-menu">
-                    <a class="admin-menu-link active" data-page="dashboard"><i class="fas fa-chart-line"></i> لوحة البيانات</a>
-                    <a class="admin-menu-link" data-page="orders"><i class="fas fa-shopping-cart"></i> الطلبات</a>
-                    <a class="admin-menu-link" data-page="services"><i class="fas fa-cogs"></i> الخدمات</a>
-                    <a class="admin-menu-link" data-page="products"><i class="fas fa-box"></i> المنتجات</a>
-                    <a class="admin-menu-link" data-page="platforms"><i class="fas fa-globe"></i> المنصات</a>
-                    <a class="admin-menu-link" data-page="payments"><i class="fas fa-credit-card"></i> طرق الدفع</a>
-                    <a class="admin-menu-link" data-page="contact"><i class="fas fa-envelope"></i>الرسائل</a>
-                    <a class="admin-menu-link" data-page="settings"><i class="fas fa-cog"></i> الإعدادات</a>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="admin-main">
-                <!-- Header -->
-                <div class="admin-header">
-                    <h2 class="admin-title">إدارة المتجر</h2>
-                    <div class="admin-top-actions">
-                        <button id="theme-toggle" class="btn-small" style="background: rgba(255,149,0,0.2); color: var(--primary-color);">
-                            <i class="fas fa-moon"></i> وضع مظلم
-                        </button>
-                        <button id="logout-btn" class="btn-small" style="background: rgba(255,100,100,0.2); color: #ff6464;">
-                            <i class="fas fa-sign-out-alt"></i> خروج
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Content Area -->
-                <div class="admin-content">
-                    <!-- Dashboard Page -->
-                    <div id="dashboard-page" class="admin-page active">
-                        <h2 class="section-title">📊 لوحة البيانات</h2>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-info">
-                                    <h3>الطلبات</h3>
-                                    <div class="stat-number" id="stat-orders">0</div>
-                                </div>
-                                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-info">
-                                    <h3>الخدمات</h3>
-                                    <div class="stat-number" id="stat-services">0</div>
-                                </div>
-                                <div class="stat-icon"><i class="fas fa-cogs"></i></div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-info">
-                                    <h3>المنصات</h3>
-                                    <div class="stat-number" id="stat-platforms">0</div>
-                                </div>
-                                <div class="stat-icon"><i class="fas fa-globe"></i></div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-info">
-                                    <h3>قيد الانتظار</h3>
-                                    <div class="stat-number" id="stat-pending">0</div>
-                                </div>
-                                <div class="stat-icon"><i class="fas fa-hourglass"></i></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Orders Page -->
-                    <div id="orders-page" class="admin-page">
-                        <div class="section-header">
-                            <h2 class="section-title">🛒 إدارة الطلبات</h2>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>رقم الطلب</th>
-                                        <th>العميل</th>
-                                        <th>المبلغ</th>
-                                        <th>العملة</th>
-                                        <th>الحالة</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="orders-table-body">
-                                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">لا توجد طلبات</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Services Page -->
-                    <div id="services-page" class="admin-page">
-                        <div class="section-header">
-                            <h2 class="section-title">⚙️ إدارة الخدمات</h2>
-                            <button class="btn-add" onclick="openServiceModal()"><i class="fas fa-plus"></i> إضافة خدمة</button>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>الخدمة</th>
-                                        <th>المنصة</th>
-                                        <th>السعر</th>
-                                        <th>الوصف</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="services-table-body">
-                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد خدمات</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Products Page -->
-                    <div id="products-page" class="admin-page">
-                        <div class="section-header">
-                            <h2 class="section-title">📦 إدارة المنتجات</h2>
-                            <button class="btn-add" onclick="openProductModal()"><i class="fas fa-plus"></i> إضافة منتج</button>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>المنتج</th>
-                                        <th>الفئة</th>
-                                        <th>السعر</th>
-                                        <th>المخزون</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="products-table-body">
-                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد منتجات</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Platforms Page -->
-                    <div id="platforms-page" class="admin-page">
-                        <div class="section-header">
-                            <h2 class="section-title">🌐 إدارة المنصات</h2>
-                            <button class="btn-add" onclick="openPlatformModal()"><i class="fas fa-plus"></i> إضافة منصة</button>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>المنصة</th>
-                                        <th>اللون</th>
-                                        <th>الأيقونة</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="platforms-table-body">
-                                    <tr><td colspan="4" style="text-align: center; padding: 2rem;">لا توجد منصات</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Payments Page -->
-                    <div id="payments-page" class="admin-page">
-                        <div class="section-header">
-                            <h2 class="section-title">💳 طرق الدفع</h2>
-                            <button class="btn-add" onclick="openPaymentModal()"><i class="fas fa-plus"></i> إضافة طريقة دفع</button>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>الطريقة</th>
-                                        <th>النوع</th>
-                                        <th>الكود</th>
-                                        <th>التعليمات</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="payments-table-body">
-                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد طرق دفع</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Contact Page -->
-                    <div id="contact-page" class="admin-page">
-                        <h2 class="section-title">📧 الرسائل الواردة</h2>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>الاسم</th>
-                                        <th>البريد</th>
-                                        <th>الهاتف</th>
-                                        <th>الرسالة</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="contact-table-body">
-                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد رسائل</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Settings Page -->
-                    <div id="settings-page" class="admin-page">
-                        <h2 class="section-title">⚙️ الإعدادات</h2>
-                        <div style="background: var(--bg-dark); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); max-width: 600px;">
-                            <form id="settings-form">
-                                <div class="form-group">
-                                    <label>اسم المتجر</label>
-                                    <input type="text" id="settings-storename" placeholder="اسم المتجر" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>الوصف</label>
-                                    <textarea id="settings-description" placeholder="وصف المتجر" rows="3"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label>رابط WhatsApp</label>
-                                    <input type="text" id="settings-whatsapp" placeholder="+966...">
-                                </div>
-                                <div class="form-group">
-                                    <label>رابط Telegram</label>
-                                    <input type="text" id="settings-telegram" placeholder="@username">
-                                </div>
-                                <div class="form-group">
-                                    <label>البريد الإلكتروني</label>
-                                    <input type="email" id="settings-email" placeholder="email@example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label>Instagram</label>
-                                    <input type="text" id="settings-instagram" placeholder="@username">
-                                </div>
-                                <div class="form-actions">
-                                    <button type="submit" class="btn-primary">حفظ الإعدادات</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Main Content -->
+    <div class="admin-main">
+      <!-- Dashboard Page -->
+      <div class="page-content" id="dashboardPage">
+        <div class="page-header">
+          <h1>لوحة البيانات</h1>
         </div>
-    </div>
-
-    <!-- Modals -->
-    <div id="service-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>إضافة/تعديل خدمة</span>
-                <button class="modal-close" onclick="closeModal('service-modal')">×</button>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #ff9500;">
+              <i class="fas fa-shopping-bag"></i>
             </div>
-            <form id="service-form">
-                <div class="form-group">
-                    <label>اسم الخدمة</label>
-                    <input type="text" id="service-name" required>
-                </div>
-                <div class="form-group">
-                    <label>المنصة</label>
-                    <select id="service-platform" required></select>
-                </div>
-                <div class="form-group">
-                    <label>السعر</label>
-                    <input type="number" id="service-price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>العملة</label>
-                    <select id="service-currency" required>
-                        <option value="SAR">SAR</option>
-                        <option value="AED">AED</option>
-                        <option value="USD">USD</option>
-                        <option value="OMR">OMR</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>الوصف</label>
-                    <textarea id="service-description" rows="3"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('service-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="product-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>إضافة/تعديل منتج</span>
-                <button class="modal-close" onclick="closeModal('product-modal')">×</button>
+            <div class="stat-info">
+              <h3>إجمالي الطلبات</h3>
+              <p class="stat-number" id="totalOrders">0</p>
             </div>
-            <form id="product-form">
-                <div class="form-group">
-                    <label>اسم المنتج</label>
-                    <input type="text" id="product-name" required>
-                </div>
-                <div class="form-group">
-                    <label>الفئة</label>
-                    <input type="text" id="product-category" required>
-                </div>
-                <div class="form-group">
-                    <label>السعر</label>
-                    <input type="number" id="product-price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>المخزون</label>
-                    <input type="number" id="product-stock" required>
-                </div>
-                <div class="form-group">
-                    <label>الصورة</label>
-                    <input type="file" id="product-image" accept="image/*">
-                    <div id="product-image-preview" style="margin-top: 1rem;"></div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('product-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="platform-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>إضافة منصة</span>
-                <button class="modal-close" onclick="closeModal('platform-modal')">×</button>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #10b981;">
+              <i class="fas fa-check-circle"></i>
             </div>
-            <form id="platform-form">
-                <div class="form-group">
-                    <label>اسم المنصة</label>
-                    <input type="text" id="platform-name" required>
-                </div>
-                <div class="form-group">
-                    <label>اللون</label>
-                    <input type="color" id="platform-color" value="#FF9600" required>
-                </div>
-                <div class="form-group">
-                    <label>الأيقونة (Font Awesome)</label>
-                    <input type="text" id="platform-icon" placeholder="fas fa-heart" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('platform-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="payment-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>إضافة طريقة دفع</span>
-                <button class="modal-close" onclick="closeModal('payment-modal')">×</button>
+            <div class="stat-info">
+              <h3>الطلبات المكتملة</h3>
+              <p class="stat-number" id="completedOrders">0</p>
             </div>
-            <form id="payment-form">
-                <div class="form-group">
-                    <label>اسم الطريقة</label>
-                    <input type="text" id="payment-name" required>
-                </div>
-                <div class="form-group">
-                    <label>النوع</label>
-                    <select id="payment-type" required>
-                        <option value="كرت ائتماني">كرت ائتماني</option>
-                        <option value="محفظة رقمية">محفظة رقمية</option>
-                        <option value="تحويل بنكي">تحويل بنكي</option>
-                        <option value="عملة رقمية">عملة رقمية</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>كود الدفع</label>
-                    <input type="text" id="payment-code" placeholder="مثال: CARD001" required>
-                </div>
-                <div class="form-group">
-                    <label>التعليمات</label>
-                    <textarea id="payment-instructions" rows="3" placeholder="شرح طريقة الدفع"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('payment-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ</button>
-                </div>
-            </form>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #f59e0b;">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <h3>الطلبات المعلقة</h3>
+              <p class="stat-number" id="pendingOrders">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #0066ff;">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="stat-info">
+              <h3>إجمالي الخدمات</h3>
+              <p class="stat-number" id="totalServices">0</p>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <script src="admin.js"></script>
+      <!-- Orders Page -->
+      <div class="page-content hidden" id="ordersPage">
+        <div class="page-header">
+          <h1>إدارة الطلبات</h1>
+        </div>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>رقم الطلب</th>
+                <th>العميل</th>
+                <th>الخدمة</th>
+                <th>السعر</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="6" style="text-align: center;">لا توجد طلبات</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Services Page -->
+      <div class="page-content hidden" id="servicesPage">
+        <div class="page-header">
+          <h1>إدارة الخدمات</h1>
+          <button class="btn-primary" id="addServiceBtn">
+            <i class="fas fa-plus"></i> إضافة خدمة
+          </button>
+        </div>
+        <div class="services-grid" id="servicesGrid">
+          <!-- Services will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Products Page -->
+      <div class="page-content hidden" id="productsPage">
+        <div class="page-header">
+          <h1>إدارة المنتجات</h1>
+          <button class="btn-primary" id="addProductBtn">
+            <i class="fas fa-plus"></i> إضافة منتج
+          </button>
+        </div>
+        <div class="products-grid" id="productsGrid">
+          <!-- Products will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Platforms Page -->
+      <div class="page-content hidden" id="platformsPage">
+        <div class="page-header">
+          <h1>إدارة المنصات</h1>
+          <button class="btn-primary" id="addPlatformBtn">
+            <i class="fas fa-plus"></i> إضافة منصة
+          </button>
+        </div>
+        <div class="platforms-grid" id="platformsGrid">
+          <!-- Platforms will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Payments Page -->
+      <div class="page-content hidden" id="paymentsPage">
+        <div class="page-header">
+          <h1>طرق الدفع</h1>
+          <button class="btn-primary" id="addPaymentBtn">
+            <i class="fas fa-plus"></i> إضافة طريقة دفع
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>اسم الطريقة</th>
+                <th>الكود</th>
+                <th>النوع</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <tr><td colspan="4" style="text-align: center;">لا توجد طرق دفع</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Messages Page -->
+      <div class="page-content hidden" id="messagesPage">
+        <div class="page-header">
+          <h1>الرسائل</h1>
+        </div>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>الرسالة</th>
+                <th>التاريخ</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="messagesTableBody">
+              <tr><td colspan="5" style="text-align: center;">لا توجد رسائل</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page-content hidden" id="settingsPage">
+        <div class="page-header">
+          <h1>الإعدادات</h1>
+        </div>
+        <div class="settings-container">
+          <div class="settings-section">
+            <h2>معلومات المتجر</h2>
+            <div class="form-group">
+              <label>اسم المتجر</label>
+              <input type="text" id="storeName" placeholder="اسم المتجر">
+            </div>
+            <div class="form-group">
+              <label>وصف المتجر</label>
+              <textarea id="storeDescription" placeholder="وصف المتجر"></textarea>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>روابط التواصل</h2>
+            <div class="form-group">
+              <label>رابط WhatsApp</label>
+              <input type="text" id="whatsappLink" placeholder="https://wa.me/...">
+            </div>
+            <div class="form-group">
+              <label>رابط Telegram</label>
+              <input type="text" id="telegramLink" placeholder="https://t.me/...">
+            </div>
+            <div class="form-group">
+              <label>البريد الإلكتروني</label>
+              <input type="email" id="emailLink" placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+              <label>رابط Instagram</label>
+              <input type="text" id="instagramLink" placeholder="https://instagram.com/...">
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>العملات المدعومة</h2>
+            <div class="currency-checkboxes">
+              <label><input type="checkbox" value="SAR" checked> الريال السعودي (SAR)</label>
+              <label><input type="checkbox" value="AED" checked> الدرهم الإماراتي (AED)</label>
+              <label><input type="checkbox" value="USD" checked> الدولار الأمريكي (USD)</label>
+              <label><input type="checkbox" value="OMR" checked> الريال العماني (OMR)</label>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="saveSettingsBtn">حفظ الإعدادات</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Service -->
+  <div class="modal hidden" id="serviceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="serviceModalTitle">إضافة خدمة جديدة</h2>
+        <button class="close-btn" id="closeServiceModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>اسم الخدمة</label>
+          <input type="text" id="serviceName" placeholder="اسم الخدمة">
+        </div>
+        <div class="form-group">
+          <label>المنصة</label>
+          <select id="servicePlatform">
+            <option value="">اختر منصة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>السعر</label>
+          <input type="number" id="servicePrice" placeholder="السعر">
+        </div>
+        <div class="form-group">
+          <label>الوصف</label>
+          <textarea id="serviceDescription" placeholder="وصف الخدمة"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelServiceBtn">إلغاء</button>
+        <button class="btn-primary" id="saveServiceBtn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Product -->
+  <div class="modal hidden" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="productModalTitle">إضافة منتج جديد</h2>
+        <button class="close-btn" id="closeProductModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>اسم المنتج</label>
+          <input type="text" id="productName" placeholder="اسم المنتج">
+        </div>
+        <div class="form-group">
+          <label>السعر</label>
+          <input type="number" id="productPrice" placeholder="السعر">
+        </div>
+        <div class="form-group">
+          <label>الكمية</label>
+          <input type="number" id="productStock" placeholder="الكمية">
+        </div>
+        <div class="form-group">
+          <label>الصورة</label>
+          <input type="file" id="productImage" accept="image/*">
+          <img id="productImagePreview" style="max-width: 200px; margin-top: 10px; display: none;">
+        </div>
+        <div class="form-group">
+          <label>الوصف</label>
+          <textarea id="productDescription" placeholder="وصف المنتج"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelProductBtn">إلغاء</button>
+        <button class="btn-primary" id="saveProductBtn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Platform -->
+  <div class="modal hidden" id="platformModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="platformModalTitle">إضافة منصة جديدة</h2>
+        <button class="close-btn" id="closePlatformModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>اسم المنصة</label>
+          <input type="text" id="platformName" placeholder="اسم المنصة">
+        </div>
+        <div class="form-group">
+          <label>أيقونة Font Awesome</label>
+          <input type="text" id="platformIcon" placeholder="fa-tiktok">
+        </div>
+        <div class="form-group">
+          <label>اللون</label>
+          <input type="color" id="platformColor" value="#ff9500">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelPlatformBtn">إلغاء</button>
+        <button class="btn-primary" id="savePlatformBtn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add Payment -->
+  <div class="modal hidden" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>إضافة طريقة دفع</h2>
+        <button class="close-btn" id="closePaymentModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>اسم الطريقة</label>
+          <input type="text" id="paymentName" placeholder="مثال: Like Card">
+        </div>
+        <div class="form-group">
+          <label>الكود</label>
+          <input type="text" id="paymentCode" placeholder="CODE123">
+        </div>
+        <div class="form-group">
+          <label>النوع</label>
+          <select id="paymentType">
+            <option value="card">بطاقة</option>
+            <option value="wallet">محفظة</option>
+            <option value="transfer">تحويل بنكي</option>
+            <option value="crypto">عملة رقمية</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelPaymentBtn">إلغاء</button>
+        <button class="btn-primary" id="savePaymentBtn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
 </body>
 </html>
