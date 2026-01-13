@@ -85,9 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
     trustForm.addEventListener("submit", (e) => {
       e.preventDefault()
 
-      const reader = new FileReader()
       const file = trustImageFile.files[0]
+      if (!file) {
+        alert("يرجى اختيار صورة")
+        return
+      }
 
+      const reader = new FileReader()
       reader.onload = (event) => {
         const newTrustImage = {
           title: document.getElementById("trustTitle").value,
@@ -99,9 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
         trustImages.push(newTrustImage)
         localStorage.setItem("trustImages", JSON.stringify(trustImages))
 
-        alert("تم إضافة صورة الثقة بنجاح")
+        showNotification("تم إضافة صورة الثقة بنجاح", "success")
+
+        // إغلاق النموذج وتنظيف المدخلات
         trustFormContainer.style.display = "none"
+        trustImagePreview.innerHTML = ""
         trustForm.reset()
+
+        // تحديث معرض الصور
         renderTrustImages()
       }
 
@@ -1306,6 +1315,17 @@ if (!document.querySelector("style[data-admin-styles]")) {
   style.setAttribute("data-admin-styles", "true")
   style.textContent = adminStyles
   document.head.appendChild(style)
+}
+
+function showNotification(message, type) {
+  const notification = document.createElement("div")
+  notification.className = `notification ${type}`
+  notification.textContent = message
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    document.body.removeChild(notification)
+  }, 3000)
 }
 
 console.log("[v0] Admin panel script loaded successfully")
