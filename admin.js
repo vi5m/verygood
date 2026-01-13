@@ -11,11 +11,11 @@ let editingProductId = null
 
 // Initialize admin panel on page load
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[v0] Admin panel loading...")
+  console.log("[v0] Initializing admin panel...")
   initializeTheme()
   checkAdminAuth()
-  initializeEventListeners()
-  console.log("[v0] Admin panel initialized successfully")
+  initializeAllEventListeners()
+  initializeDefaultData()
 })
 
 function initializeTheme() {
@@ -23,7 +23,6 @@ function initializeTheme() {
   if (savedTheme === "light") {
     document.body.classList.add("light-mode")
   }
-
   const themeToggle = document.getElementById("theme-toggle")
   if (themeToggle) {
     themeToggle.addEventListener("click", toggleTheme)
@@ -49,7 +48,6 @@ function checkAdminAuth() {
 function showLoginPage() {
   const loginPage = document.getElementById("login-page")
   const adminPage = document.getElementById("admin-page")
-
   if (loginPage) loginPage.classList.add("active")
   if (adminPage) adminPage.classList.remove("active")
 }
@@ -57,15 +55,13 @@ function showLoginPage() {
 function showAdminDashboard() {
   const loginPage = document.getElementById("login-page")
   const adminPage = document.getElementById("admin-page")
-
   if (loginPage) loginPage.classList.remove("active")
   if (adminPage) adminPage.classList.add("active")
-
   loadDashboardData()
   switchAdminPage("dashboard")
 }
 
-function initializeEventListeners() {
+function initializeAllEventListeners() {
   // Login form
   const loginForm = document.getElementById("login-form")
   if (loginForm) {
@@ -78,60 +74,47 @@ function initializeEventListeners() {
     logoutBtn.addEventListener("click", handleAdminLogout)
   }
 
-  // Menu links - fixed menu link event listeners
-  document.querySelectorAll(".admin-menu-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
+  // Menu links
+  const menuLinks = document.querySelectorAll(".admin-menu-link")
+  menuLinks.forEach((link) => {
+    link.addEventListener("click", function (e) {
       e.preventDefault()
-      const page = link.getAttribute("data-page")
-      console.log("[v0] Switching to page:", page)
+      const page = this.getAttribute("data-page")
       switchAdminPage(page)
     })
   })
 
-  // Modal close on overlay click
+  // Modal close
   document.querySelectorAll(".modal-overlay").forEach((modal) => {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.remove("active")
+    modal.addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.classList.remove("active")
       }
     })
   })
 
   // Forms
   const serviceForm = document.getElementById("service-form")
-  if (serviceForm) {
-    serviceForm.addEventListener("submit", saveService)
-  }
+  if (serviceForm) serviceForm.addEventListener("submit", saveService)
 
   const productForm = document.getElementById("product-form")
-  if (productForm) {
-    productForm.addEventListener("submit", saveProduct)
-  }
+  if (productForm) productForm.addEventListener("submit", saveProduct)
 
   const platformForm = document.getElementById("platform-form")
-  if (platformForm) {
-    platformForm.addEventListener("submit", savePlatform)
-  }
+  if (platformForm) platformForm.addEventListener("submit", savePlatform)
 
   const paymentForm = document.getElementById("payment-form")
-  if (paymentForm) {
-    paymentForm.addEventListener("submit", savePayment)
-  }
+  if (paymentForm) paymentForm.addEventListener("submit", savePayment)
 
   const settingsForm = document.getElementById("settings-form")
-  if (settingsForm) {
-    settingsForm.addEventListener("submit", saveSettings)
-  }
+  if (settingsForm) settingsForm.addEventListener("submit", saveSettings)
 
   const productImageInput = document.getElementById("product-image")
   if (productImageInput) {
     productImageInput.addEventListener("change", previewProductImage)
   }
-
-  initializeDefaultData()
 }
 
-// Login Handler
 function handleAdminLogin(e) {
   e.preventDefault()
   const username = document.getElementById("username").value.trim()
@@ -159,9 +142,9 @@ function handleAdminLogout() {
 }
 
 function switchAdminPage(page) {
-  console.log("[v0] Switching page to:", page)
+  console.log("[v0] Switching to page:", page)
 
-  // Update menu active state
+  // Update active menu
   document.querySelectorAll(".admin-menu-link").forEach((link) => {
     link.classList.remove("active")
     if (link.getAttribute("data-page") === page) {
@@ -169,37 +152,31 @@ function switchAdminPage(page) {
     }
   })
 
-  // Hide all pages
+  // Hide all pages and show target
   document.querySelectorAll(".admin-page").forEach((p) => {
     p.classList.remove("active")
   })
 
-  // Show target page
   const targetPage = document.getElementById(page + "-page")
   if (targetPage) {
     targetPage.classList.add("active")
-    console.log("[v0] Page displayed:", page + "-page")
-  } else {
-    console.error("[v0] Page not found:", page + "-page")
-  }
 
-  // Load data for specific pages
-  if (page === "dashboard") loadDashboardData()
-  if (page === "orders") loadOrders()
-  if (page === "products") loadProducts()
-  if (page === "services") loadServices()
-  if (page === "platforms") loadPlatforms()
-  if (page === "payments") loadPaymentMethods()
-  if (page === "contact") loadContactMessages()
-  if (page === "settings") loadSettingsForm()
+    // Load data for specific pages
+    if (page === "dashboard") loadDashboardData()
+    if (page === "orders") loadOrders()
+    if (page === "products") loadProducts()
+    if (page === "services") loadServices()
+    if (page === "platforms") loadPlatforms()
+    if (page === "payments") loadPaymentMethods()
+    if (page === "contact") loadContactMessages()
+    if (page === "settings") loadSettingsForm()
+  }
 }
 
-// Dashboard Data
 function loadDashboardData() {
   const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
   const services = JSON.parse(localStorage.getItem("admin_services")) || []
   const platforms = JSON.parse(localStorage.getItem("admin_platforms")) || []
-  const products = JSON.parse(localStorage.getItem("admin_products")) || []
 
   const statOrders = document.getElementById("stat-orders")
   const statServices = document.getElementById("stat-services")

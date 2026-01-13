@@ -7,971 +7,76 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Admin Specific Styles */
         .admin-page { display: none; }
-        .admin-page.active { display: block; }
-
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .login-box {
-            background: var(--bg-dark);
-            padding: 3rem;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .login-box h1 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .login-input {
-            width: 100%;
-            padding: 1rem;
-            background: var(--border-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 15px rgba(255, 149, 0, 0.4);
-        }
-
-        .login-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--bg-dark);
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(255, 149, 0, 0.3);
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 149, 0, 0.4);
-        }
-
-        /* Admin Layout */
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-            background: var(--bg-darker);
-        }
-
-        .admin-sidebar {
-            background: var(--bg-darker);
-            border-right: 1px solid var(--border-color);
-            padding: 2rem 0;
-            position: sticky;
-            top: 0;
-            max-height: 100vh;
-            overflow-y: auto;
-        }
-
-        .admin-sidebar-logo {
-            text-align: center;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.2rem;
-        }
-
-        .admin-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 0 1rem;
-        }
-
-        .admin-menu-link {
-            padding: 0.9rem 1rem;
-            border-radius: 8px;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            text-decoration: none;
-            font-size: 0.95rem;
-        }
-
-        .admin-menu-link:hover {
-            background: rgba(255, 149, 0, 0.1);
-            color: var(--primary-color);
-            transform: translateX(-5px);
-        }
-
-        .admin-menu-link.active {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--primary-color);
-            border-right: 3px solid var(--primary-color);
-        }
-
-        .admin-menu-link i {
-            width: 20px;
-        }
-
-        .admin-header {
-            background: var(--bg-dark);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .admin-top-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .admin-main {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-content {
-            padding: 2rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        /* Dashboard Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(255, 149, 0, 0.1);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--primary-color);
-            background: rgba(255, 149, 0, 0.1);
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stat-info h3 {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-info .stat-number {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        /* Tables */
-        .admin-table-container {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .admin-table thead {
-            background: rgba(255, 149, 0, 0.1);
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .admin-table th {
-            padding: 1rem;
-            text-align: right;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .admin-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-light);
-        }
-
-        .admin-table tr:hover {
-            background: rgba(255, 149, 0, 0.05);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-small {
-            padding: 0.5rem 0.8rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .btn-edit {
-            background: rgba(100, 200, 255, 0.2);
-            color: #64c8ff;
-        }
-
-        .btn-edit:hover {
-            background: rgba(100, 200, 255, 0.3);
-        }
-
-        .btn-delete {
-            background: rgba(255, 100, 100, 0.2);
-            color: #ff6464;
-        }
-
-        .btn-delete:hover {
-            background: rgba(255, 100, 100, 0.3);
-        }
-
-        .btn-approve {
-            background: rgba(100, 255, 100, 0.2);
-            color: #64ff64;
-        }
-
-        .btn-approve:hover {
-            background: rgba(100, 255, 100, 0.3);
-        }
-
-        .btn-reject {
-            background: rgba(255, 150, 0, 0.2);
-            color: #ff9600;
-        }
-
-        .btn-reject:hover {
-            background: rgba(255, 150, 0, 0.3);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: rgba(255, 200, 0, 0.2);
-            color: #ffc800;
-        }
-
-        .status-approved {
-            background: rgba(100, 255, 100, 0.2);
-            color: #64ff64;
-        }
-
-        .status-rejected {
-            background: rgba(255, 100, 100, 0.2);
-            color: #ff6464;
-        }
-
-        /* Modals */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-dark);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            background: var(--border-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-dark);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--bg-dark);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-light);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--primary-color);
-        }
-
-        /* Added styles for notification system */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1.5rem;
-            background: var(--bg-dark);
-            border-left: 4px solid var(--primary-color);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .notification.success {
-            border-left-color: #64ff64;
-            color: #64ff64;
-        }
-
-        .notification.error {
-            border-left-color: #ff6464;
-            color: #ff6464;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Added section header styles */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .btn-add {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--bg-dark);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3);
-        }
-
-
-        /* Admin Specific Styles - Removed duplicate styles */
-
-        /* Admin Layout */
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-            background: var(--bg-darker); /* Changed background */
-        }
-
-        .admin-sidebar {
-            background: var(--bg-darker); /* Consistent background */
-            border-right: 1px solid var(--border-color);
-            padding: 2rem 0;
-            position: sticky; /* Added sticky positioning */
-            top: 0; /* Stick to the top */
-            max-height: 100vh; /* Ensure it doesn't exceed viewport height */
-            overflow-y: auto; /* Enable scrolling if content overflows */
-        }
-
-        .admin-sidebar-logo {
-            text-align: center;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.2rem; /* Slightly larger font for logo */
-        }
-
-        .admin-menu { /* Changed from admin-sidebar-menu */
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 0 1rem;
-        }
-
-        .admin-menu-link { /* Changed from admin-menu-link */
-            padding: 0.9rem 1rem;
-            border-radius: 8px;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            text-decoration: none;
-            font-size: 0.95rem;
-        }
-
-        .admin-menu-link:hover {
-            background: rgba(255, 149, 0, 0.1);
-            color: var(--primary-color);
-            transform: translateX(-5px); /* Slight animation on hover */
-        }
-
-        .admin-menu-link.active {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--primary-color);
-            border-right: 3px solid var(--primary-color);
-        }
-
-        .admin-menu-link i {
-            width: 20px; /* Consistent icon width */
-        }
-
-
-        .admin-header {
-            background: var(--bg-dark); /* Consistent background */
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-title { /* Changed from admin-title in header */
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .admin-top-actions { /* New class for header actions */
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .admin-main {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-content {
-            flex: 1; /* Allow content to grow and fill space */
-            padding: 2rem;
-            overflow-y: auto; /* Enable scrolling for content */
-        }
-
-        /* Dashboard Specific Styles */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(255, 149, 0, 0.1);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--primary-color);
-            background: rgba(255, 149, 0, 0.1);
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stat-info h3 {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-info .stat-number {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        /* Table Styles */
-        .admin-table-container {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden; /* Ensures border-radius works with content */
-            margin-bottom: 2rem;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .admin-table thead {
-            background: rgba(255, 149, 0, 0.1);
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .admin-table th {
-            padding: 1rem;
-            text-align: right; /* Aligning text to the right for RTL */
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .admin-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-light);
-        }
-
-        .admin-table tr:hover {
-            background: rgba(255, 149, 0, 0.05);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Button Styles */
-        .btn-small {
-            padding: 0.5rem 0.8rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .btn-edit {
-            background: rgba(100, 200, 255, 0.2);
-            color: #64c8ff;
-        }
-
-        .btn-edit:hover {
-            background: rgba(100, 200, 255, 0.3);
-        }
-
-        .btn-delete {
-            background: rgba(255, 100, 100, 0.2);
-            color: #ff6464;
-        }
-
-        .btn-delete:hover {
-            background: rgba(255, 100, 100, 0.3);
-        }
-
-        .btn-approve {
-            background: rgba(100, 255, 100, 0.2);
-            color: #64ff64;
-        }
-
-        .btn-approve:hover {
-            background: rgba(100, 255, 100, 0.3);
-        }
-
-        .btn-reject {
-            background: rgba(255, 150, 0, 0.2);
-            color: #ff9600;
-        }
-
-        .btn-reject:hover {
-            background: rgba(255, 150, 0, 0.3);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: rgba(255, 200, 0, 0.2);
-            color: #ffc800;
-        }
-
-        .status-approved {
-            background: rgba(100, 255, 100, 0.2);
-            color: #64ff64;
-        }
-
-        .status-rejected {
-            background: rgba(255, 100, 100, 0.2);
-            color: #ff6464;
-        }
-
-        /* Modals */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content { /* Changed from modal-box */
-            background: var(--bg-dark);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-header { /* New class for modal header */
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-close { /* New class for modal close button */
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            background: var(--border-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-dark);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
-        }
-
-        .form-actions { /* New class for modal form actions */
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--bg-dark);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-light);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--primary-color);
-        }
-
-        /* Notification System */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1.5rem;
-            background: var(--bg-dark);
-            border-left: 4px solid var(--primary-color);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 2000; /* Ensure notifications are on top */
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .notification.success {
-            border-left-color: #64ff64; /* Green for success */
-            color: #64ff64;
-        }
-
-        .notification.error {
-            border-left-color: #ff6464; /* Red for error */
-            color: #ff6464;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Section Header Styles */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 1rem;
-        }
-
-        .section-title { /* New class for section titles */
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .btn-add { /* New class for add buttons */
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--bg-dark);
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3);
-        }
+        .admin-page.active { display: block !important; }
+        .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+        .login-box { background: var(--bg-dark); padding: 3rem; border-radius: 15px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+        .login-box h1 { text-align: center; margin-bottom: 2rem; font-size: 2rem; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .login-input { width: 100%; padding: 1rem; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark); margin-bottom: 1rem; font-size: 1rem; transition: all 0.3s; }
+        .login-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 15px rgba(255, 149, 0, 0.4); }
+        .login-btn { width: 100%; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); border: none; padding: 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.3s; box-shadow: 0 5px 20px rgba(255, 149, 0, 0.3); }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 149, 0, 0.4); }
+        .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; background: var(--bg-darker); }
+        .admin-sidebar { background: var(--bg-darker); border-right: 1px solid var(--border-color); padding: 2rem 0; position: sticky; top: 0; max-height: 100vh; overflow-y: auto; }
+        .admin-sidebar-logo { text-align: center; padding: 1rem; margin-bottom: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.2rem; }
+        .admin-menu { display: flex; flex-direction: column; gap: 0.5rem; padding: 0 1rem; }
+        .admin-menu-link { padding: 0.9rem 1rem; border-radius: 8px; color: var(--text-light); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.8rem; text-decoration: none; font-size: 0.95rem; }
+        .admin-menu-link:hover { background: rgba(255, 149, 0, 0.1); color: var(--primary-color); transform: translateX(-5px); }
+        .admin-menu-link.active { background: rgba(255, 149, 0, 0.2); color: var(--primary-color); border-right: 3px solid var(--primary-color); }
+        .admin-menu-link i { width: 20px; }
+        .admin-header { background: var(--bg-dark); border-bottom: 1px solid var(--border-color); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .admin-title { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+        .admin-top-actions { display: flex; gap: 1rem; align-items: center; }
+        .admin-main { display: flex; flex-direction: column; }
+        .admin-content { padding: 2rem; overflow-y: auto; flex: 1; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-dark); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+        .stat-card:hover { border-color: var(--primary-color); box-shadow: 0 10px 30px rgba(255, 149, 0, 0.1); }
+        .stat-icon { font-size: 2rem; color: var(--primary-color); background: rgba(255, 149, 0, 0.1); width: 60px; height: 60px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .stat-info h3 { color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .stat-info .stat-number { color: var(--primary-color); font-size: 1.8rem; font-weight: 700; }
+        .admin-table-container { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table thead { background: rgba(255, 149, 0, 0.1); border-bottom: 2px solid var(--border-color); }
+        .admin-table th { padding: 1rem; text-align: right; color: var(--primary-color); font-weight: 600; }
+        .admin-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-light); }
+        .admin-table tr:hover { background: rgba(255, 149, 0, 0.05); }
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .btn-small { padding: 0.5rem 0.8rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .btn-edit { background: rgba(100, 200, 255, 0.2); color: #64c8ff; }
+        .btn-edit:hover { background: rgba(100, 200, 255, 0.3); }
+        .btn-delete { background: rgba(255, 100, 100, 0.2); color: #ff6464; }
+        .btn-delete:hover { background: rgba(255, 100, 100, 0.3); }
+        .btn-approve { background: rgba(100, 255, 100, 0.2); color: #64ff64; }
+        .btn-approve:hover { background: rgba(100, 255, 100, 0.3); }
+        .btn-reject { background: rgba(255, 150, 0, 0.2); color: #ff9600; }
+        .btn-reject:hover { background: rgba(255, 150, 0, 0.3); }
+        .status-badge { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .status-pending { background: rgba(255, 200, 0, 0.2); color: #ffc800; }
+        .status-approved { background: rgba(100, 255, 100, 0.2); color: #64ff64; }
+        .status-rejected { background: rgba(255, 100, 100, 0.2); color: #ff6464; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--bg-dark); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
+        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
+        .modal-close { background: none; border: none; color: var(--text-light); font-size: 1.5rem; cursor: pointer; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark); font-size: 1rem; transition: all 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(255, 149, 0, 0.3); }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3); }
+        .btn-secondary { background: var(--border-color); color: var(--text-light); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-secondary:hover { background: rgba(255, 149, 0, 0.2); color: var(--primary-color); }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 1.5rem; background: var(--bg-dark); border-left: 4px solid var(--primary-color); border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 2000; animation: slideIn 0.3s ease-out; }
+        .notification.success { border-left-color: #64ff64; color: #64ff64; }
+        .notification.error { border-left-color: #ff6464; color: #ff6464; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .section-title { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
+        .btn-add { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: var(--bg-dark); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255, 149, 0, 0.3); }
 
         /* Media Queries for Responsiveness */
         @media (max-width: 768px) {
@@ -1013,20 +118,19 @@
 </head>
 <body>
     <!-- Login Page -->
-    <div id="login-page" class="admin-page"> <!-- Removed 'active' class, handled by JS -->
+    <div id="login-page" class="admin-page active">
         <div class="login-container">
             <div class="login-box">
-                <h1>
-                    <i class="fas fa-shield-alt"></i> لوحة التحكم
-                </h1>
+                <h1>🔐 لوحة التحكم</h1>
                 <form id="login-form">
-                    <input type="text" id="username" class="login-input" placeholder="اسم المستخدم" required>
-                    <input type="password" id="password" class="login-input" placeholder="كلمة المرور" required>
+                    <div class="form-group">
+                        <input type="text" id="username" class="login-input" placeholder="اسم المستخدم" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" class="login-input" placeholder="كلمة المرور" required>
+                    </div>
                     <button type="submit" class="login-btn">دخول</button>
                 </form>
-                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
-                    <i class="fas fa-info-circle"></i> بيانات العرض: admin / admin123
-                </p>
             </div>
         </div>
     </div>
@@ -1036,37 +140,16 @@
         <div class="admin-layout">
             <!-- Sidebar -->
             <div class="admin-sidebar">
-                <div class="admin-sidebar-logo">
-                    <i class="fas fa-crown"></i> الإدارة <!-- Changed icon -->
-                </div>
-                <div class="admin-menu"> <!-- Changed from ul/li structure -->
-                    <a href="#" data-page="dashboard" class="admin-menu-link active">
-                        <i class="fas fa-chart-line"></i> لوحة البيانات
-                    </a>
-                    <a href="#" data-page="orders" class="admin-menu-link">
-                        <i class="fas fa-shopping-cart"></i> إدارة الطلبات <!-- Changed icon and text -->
-                    </a>
-                    <a href="#" data-page="products" class="admin-menu-link">
-                        <i class="fas fa-box"></i> المنتجات <!-- New menu item -->
-                    </a>
-                    <a href="#" data-page="services" class="admin-menu-link">
-                        <i class="fas fa-cog"></i> الخدمات <!-- Changed icon and text -->
-                    </a>
-                    <a href="#" data-page="platforms" class="admin-menu-link">
-                        <i class="fas fa-globe"></i> المنصات
-                    </a>
-                    <a href="#" data-page="payments" class="admin-menu-link"> <!-- New menu item -->
-                        <i class="fas fa-credit-card"></i> طرق الدفع
-                    </a>
-                    <a href="#" data-page="contact" class="admin-menu-link"> <!-- New menu item -->
-                        <i class="fas fa-envelope"></i> الرسائل
-                    </a>
-                    <a href="#" data-page="settings" class="admin-menu-link">
-                        <i class="fas fa-sliders-h"></i> الإعدادات
-                    </a>
-                    <a href="#" id="logout-btn" class="admin-menu-link" style="color: #ff6464; margin-top: 2rem;">
-                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
-                    </a>
+                <div class="admin-sidebar-logo">📊 الإدارة</div>
+                <div class="admin-menu">
+                    <a class="admin-menu-link active" data-page="dashboard"><i class="fas fa-chart-line"></i> لوحة البيانات</a>
+                    <a class="admin-menu-link" data-page="orders"><i class="fas fa-shopping-cart"></i> الطلبات</a>
+                    <a class="admin-menu-link" data-page="services"><i class="fas fa-cogs"></i> الخدمات</a>
+                    <a class="admin-menu-link" data-page="products"><i class="fas fa-box"></i> المنتجات</a>
+                    <a class="admin-menu-link" data-page="platforms"><i class="fas fa-globe"></i> المنصات</a>
+                    <a class="admin-menu-link" data-page="payments"><i class="fas fa-credit-card"></i> طرق الدفع</a>
+                    <a class="admin-menu-link" data-page="contact"><i class="fas fa-envelope"></i>الرسائل</a>
+                    <a class="admin-menu-link" data-page="settings"><i class="fas fa-cog"></i> الإعدادات</a>
                 </div>
             </div>
 
@@ -1074,10 +157,13 @@
             <div class="admin-main">
                 <!-- Header -->
                 <div class="admin-header">
-                    <div class="admin-title">لوحة التحكم</div>
+                    <h2 class="admin-title">إدارة المتجر</h2>
                     <div class="admin-top-actions">
-                        <button id="theme-toggle" class="btn-small" style="background: rgba(100, 200, 255, 0.2); color: #64c8ff;">
-                            <i class="fas fa-moon"></i> <!-- Added theme toggle button -->
+                        <button id="theme-toggle" class="btn-small" style="background: rgba(255,149,0,0.2); color: var(--primary-color);">
+                            <i class="fas fa-moon"></i> وضع مظلم
+                        </button>
+                        <button id="logout-btn" class="btn-small" style="background: rgba(255,100,100,0.2); color: #ff6464;">
+                            <i class="fas fa-sign-out-alt"></i> خروج
                         </button>
                     </div>
                 </div>
@@ -1085,22 +171,22 @@
                 <!-- Content Area -->
                 <div class="admin-content">
                     <!-- Dashboard Page -->
-                    <div id="dashboard-page" class="admin-page active"> <!-- Changed ID -->
-                        <div class="section-title">لوحة البيانات</div> <!-- Changed from admin-title -->
+                    <div id="dashboard-page" class="admin-page active">
+                        <h2 class="section-title">📊 لوحة البيانات</h2>
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-info">
-                                    <h3>إجمالي الطلبات</h3>
+                                    <h3>الطلبات</h3>
                                     <div class="stat-number" id="stat-orders">0</div>
                                 </div>
-                                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div> <!-- Changed icon -->
+                                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-info">
                                     <h3>الخدمات</h3>
                                     <div class="stat-number" id="stat-services">0</div>
                                 </div>
-                                <div class="stat-icon"><i class="fas fa-cog"></i></div> <!-- Changed icon -->
+                                <div class="stat-icon"><i class="fas fa-cogs"></i></div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-info">
@@ -1109,54 +195,75 @@
                                 </div>
                                 <div class="stat-icon"><i class="fas fa-globe"></i></div>
                             </div>
-                            <div class="stat-card"> <!-- New stat card for products -->
+                            <div class="stat-card">
                                 <div class="stat-info">
-                                    <h3>المنتجات</h3>
-                                    <div class="stat-number" id="stat-products">0</div>
+                                    <h3>قيد الانتظار</h3>
+                                    <div class="stat-number" id="stat-pending">0</div>
                                 </div>
-                                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                                <div class="stat-icon"><i class="fas fa-hourglass"></i></div>
                             </div>
                         </div>
-
-                        <!-- Removed the "أحدث الطلبات" table from dashboard content as it's handled by the main orders page -->
                     </div>
 
-                    <!-- Orders Management -->
-                    <div id="orders-page" class="admin-page"> <!-- Changed ID -->
+                    <!-- Orders Page -->
+                    <div id="orders-page" class="admin-page">
                         <div class="section-header">
-                            <div class="section-title">إدارة الطلبات</div>
+                            <h2 class="section-title">🛒 إدارة الطلبات</h2>
                         </div>
                         <div class="admin-table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
                                         <th>رقم الطلب</th>
-                                        <th>المشتري</th> <!-- Changed column -->
-                                        <th>المبلغ</th> <!-- Changed column -->
+                                        <th>العميل</th>
+                                        <th>المبلغ</th>
+                                        <th>العملة</th>
                                         <th>الحالة</th>
-                                        <th>التاريخ</th>
                                         <th>الإجراءات</th>
                                     </tr>
                                 </thead>
-                                <tbody id="orders-table-body"> <!-- Changed ID -->
+                                <tbody id="orders-table-body">
+                                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">لا توجد طلبات</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Products Management -->
-                    <div id="products-page" class="admin-page"> <!-- New Page -->
+                    <!-- Services Page -->
+                    <div id="services-page" class="admin-page">
                         <div class="section-header">
-                            <div class="section-title">إدارة المنتجات</div>
-                            <button class="btn-add" onclick="openProductModal()">
-                                <i class="fas fa-plus"></i> منتج جديد
-                            </button>
+                            <h2 class="section-title">⚙️ إدارة الخدمات</h2>
+                            <button class="btn-add" onclick="openServiceModal()"><i class="fas fa-plus"></i> إضافة خدمة</button>
                         </div>
                         <div class="admin-table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>اسم المنتج</th>
+                                        <th>الخدمة</th>
+                                        <th>المنصة</th>
+                                        <th>السعر</th>
+                                        <th>الوصف</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="services-table-body">
+                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد خدمات</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Products Page -->
+                    <div id="products-page" class="admin-page">
+                        <div class="section-header">
+                            <h2 class="section-title">📦 إدارة المنتجات</h2>
+                            <button class="btn-add" onclick="openProductModal()"><i class="fas fa-plus"></i> إضافة منتج</button>
+                        </div>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>المنتج</th>
                                         <th>الفئة</th>
                                         <th>السعر</th>
                                         <th>المخزون</th>
@@ -1164,145 +271,113 @@
                                     </tr>
                                 </thead>
                                 <tbody id="products-table-body">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Services Page -->
-                    <div id="services-page" class="admin-page"> <!-- Changed ID -->
-                        <div class="section-header">
-                            <div class="section-title">إدارة الخدمات</div>
-                            <button class="btn-add" onclick="openServiceModal()"> <!-- Changed button class -->
-                                <i class="fas fa-plus"></i> خدمة جديدة
-                            </button>
-                        </div>
-
-                        <div class="admin-table-container"> <!-- Changed class -->
-                            <table class="admin-table"> <!-- Changed class -->
-                                <thead>
-                                    <tr>
-                                        <th>اسم الخدمة</th>
-                                        <th>المنصة</th>
-                                        <th>السعر</th>
-                                        <th>الوصف</th> <!-- Added description column -->
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="services-table-body"> <!-- Changed ID -->
+                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد منتجات</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <!-- Platforms Page -->
-                    <div id="platforms-page" class="admin-page"> <!-- Changed ID -->
+                    <div id="platforms-page" class="admin-page">
                         <div class="section-header">
-                            <div class="section-title">إدارة المنصات</div>
-                            <button class="btn-add" onclick="openPlatformModal()"> <!-- Changed button class -->
-                                <i class="fas fa-plus"></i> منصة جديدة
-                            </button>
-                        </div>
-
-                        <div class="admin-table-container"> <!-- Changed class -->
-                            <table class="admin-table"> <!-- Changed class -->
-                                <thead>
-                                    <tr>
-                                        <th>اسم المنصة</th>
-                                        <th>الرمز</th> <!-- Changed column name -->
-                                        <th>اللون</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="platforms-table-body"> <!-- Changed ID -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Payment Methods Page -->
-                    <div id="payments-page" class="admin-page"> <!-- New Page -->
-                        <div class="section-header">
-                            <div class="section-title">طرق الدفع</div>
-                            <button class="btn-add" onclick="openPaymentModal()">
-                                <i class="fas fa-plus"></i> طريقة دفع جديدة
-                            </button>
+                            <h2 class="section-title">🌐 إدارة المنصات</h2>
+                            <button class="btn-add" onclick="openPlatformModal()"><i class="fas fa-plus"></i> إضافة منصة</button>
                         </div>
                         <div class="admin-table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>اسم الطريقة</th>
-                                        <th>رمز الدفع</th>
-                                        <th>النوع</th>
+                                        <th>المنصة</th>
+                                        <th>اللون</th>
+                                        <th>الأيقونة</th>
                                         <th>الإجراءات</th>
                                     </tr>
                                 </thead>
-                                <tbody id="payments-table-body">
+                                <tbody id="platforms-table-body">
+                                    <tr><td colspan="4" style="text-align: center; padding: 2rem;">لا توجد منصات</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Contact Messages Page -->
-                    <div id="contact-page" class="admin-page"> <!-- New Page -->
-                        <div class="section-title">الرسائل المستلمة</div>
+                    <!-- Payments Page -->
+                    <div id="payments-page" class="admin-page">
+                        <div class="section-header">
+                            <h2 class="section-title">💳 طرق الدفع</h2>
+                            <button class="btn-add" onclick="openPaymentModal()"><i class="fas fa-plus"></i> إضافة طريقة دفع</button>
+                        </div>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطريقة</th>
+                                        <th>النوع</th>
+                                        <th>الكود</th>
+                                        <th>التعليمات</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payments-table-body">
+                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد طرق دفع</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Contact Page -->
+                    <div id="contact-page" class="admin-page">
+                        <h2 class="section-title">📧 الرسائل الواردة</h2>
                         <div class="admin-table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
                                         <th>الاسم</th>
-                                        <th>البريد الإلكتروني</th>
+                                        <th>البريد</th>
+                                        <th>الهاتف</th>
                                         <th>الرسالة</th>
-                                        <th>التاريخ</th>
                                         <th>الإجراءات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="contact-table-body">
+                                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">لا توجد رسائل</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <!-- Settings Page -->
-                    <div id="settings-page" class="admin-page"> <!-- Changed ID -->
-                        <div class="section-title">الإعدادات</div>
-                        <div class="admin-table-container" style="padding: 2rem;"> <!-- Reused table container for settings -->
-                            <div class="form-group">
-                                <label>روابط التواصل</label>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                    <div>
-                                        <label style="font-size: 0.9rem;">WhatsApp</label>
-                                        <input type="text" id="whatsapp-link" placeholder="https://wa.me/...">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">Telegram</label>
-                                        <input type="text" id="telegram-link" placeholder="https://t.me/...">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">البريد الإلكتروني</label>
-                                        <input type="email" id="email-link" placeholder="email@example.com">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">Instagram</label>
-                                        <input type="text" id="instagram-link" placeholder="https://instagram.com/...">
-                                    </div>
+                    <div id="settings-page" class="admin-page">
+                        <h2 class="section-title">⚙️ الإعدادات</h2>
+                        <div style="background: var(--bg-dark); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); max-width: 600px;">
+                            <form id="settings-form">
+                                <div class="form-group">
+                                    <label>اسم المتجر</label>
+                                    <input type="text" id="settings-storename" placeholder="اسم المتجر" required>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label>معلومات المتجر</label>
-                                <div>
-                                    <label style="font-size: 0.9rem;">اسم المتجر</label>
-                                    <input type="text" id="store-name" placeholder="اسم المتجر">
+                                <div class="form-group">
+                                    <label>الوصف</label>
+                                    <textarea id="settings-description" placeholder="وصف المتجر" rows="3"></textarea>
                                 </div>
-                                <div style="margin-top: 1rem;">
-                                    <label style="font-size: 0.9rem;">وصف المتجر</label>
-                                    <textarea id="store-description" placeholder="وصف المتجر" rows="3"></textarea>
+                                <div class="form-group">
+                                    <label>رابط WhatsApp</label>
+                                    <input type="text" id="settings-whatsapp" placeholder="+966...">
                                 </div>
-                            </div>
-                            <div class="form-actions">
-                                <button class="btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
-                            </div>
+                                <div class="form-group">
+                                    <label>رابط Telegram</label>
+                                    <input type="text" id="settings-telegram" placeholder="@username">
+                                </div>
+                                <div class="form-group">
+                                    <label>البريد الإلكتروني</label>
+                                    <input type="email" id="settings-email" placeholder="email@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Instagram</label>
+                                    <input type="text" id="settings-instagram" placeholder="@username">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary">حفظ الإعدادات</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -1311,12 +386,51 @@
     </div>
 
     <!-- Modals -->
-    <!-- Product Modal -->
+    <div id="service-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>إضافة/تعديل خدمة</span>
+                <button class="modal-close" onclick="closeModal('service-modal')">×</button>
+            </div>
+            <form id="service-form">
+                <div class="form-group">
+                    <label>اسم الخدمة</label>
+                    <input type="text" id="service-name" required>
+                </div>
+                <div class="form-group">
+                    <label>المنصة</label>
+                    <select id="service-platform" required></select>
+                </div>
+                <div class="form-group">
+                    <label>السعر</label>
+                    <input type="number" id="service-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>العملة</label>
+                    <select id="service-currency" required>
+                        <option value="SAR">SAR</option>
+                        <option value="AED">AED</option>
+                        <option value="USD">USD</option>
+                        <option value="OMR">OMR</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="service-description" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('service-modal')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="product-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>منتج جديد</span>
-                <button class="modal-close" onclick="closeModal('product-modal')">&times;</button>
+                <span>إضافة/تعديل منتج</span>
+                <button class="modal-close" onclick="closeModal('product-modal')">×</button>
             </div>
             <form id="product-form">
                 <div class="form-group">
@@ -1333,69 +447,26 @@
                 </div>
                 <div class="form-group">
                     <label>المخزون</label>
-                    <input type="number" id="product-stock" min="0" required>
+                    <input type="number" id="product-stock" required>
                 </div>
                 <div class="form-group">
-                    <label>الوصف</label>
-                    <textarea id="product-description" rows="3"></textarea>
+                    <label>الصورة</label>
+                    <input type="file" id="product-image" accept="image/*">
+                    <div id="product-image-preview" style="margin-top: 1rem;"></div>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('product-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ المنتج</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Service Modal -->
-    <div id="service-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>خدمة جديدة</span>
-                <button class="modal-close" onclick="closeModal('service-modal')">&times;</button>
-            </div>
-            <form id="service-form">
-                <div class="form-group">
-                    <label>اسم الخدمة</label>
-                    <input type="text" id="service-name" required>
-                </div>
-                <div class="form-group">
-                    <label>المنصة</label>
-                    <select id="service-platform" required>
-                        <option value="">اختر منصة</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>السعر</label>
-                    <input type="number" id="service-price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>العملة</label>
-                    <select id="service-currency" required>
-                        <option value="SAR">الريال السعودي (SAR)</option>
-                        <option value="AED">الدرهم الإماراتي (AED)</option>
-                        <option value="USD">الدولار الأمريكي (USD)</option>
-                        <option value="OMR">الريال العماني (OMR)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>الوصف</label>
-                    <textarea id="service-description" rows="3"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('service-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ الخدمة</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Platform Modal -->
     <div id="platform-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>منصة جديدة</span>
-                <button class="modal-close" onclick="closeModal('platform-modal')">&times;</button>
+                <span>إضافة منصة</span>
+                <button class="modal-close" onclick="closeModal('platform-modal')">×</button>
             </div>
             <form id="platform-form">
                 <div class="form-group">
@@ -1403,27 +474,26 @@
                     <input type="text" id="platform-name" required>
                 </div>
                 <div class="form-group">
-                    <label>رمز Font Awesome</label>
-                    <input type="text" id="platform-icon" placeholder="fa-tiktok" required>
+                    <label>اللون</label>
+                    <input type="color" id="platform-color" value="#FF9600" required>
                 </div>
                 <div class="form-group">
-                    <label>اللون الأساسي</label>
-                    <input type="color" id="platform-color" required>
+                    <label>الأيقونة (Font Awesome)</label>
+                    <input type="text" id="platform-icon" placeholder="fas fa-heart" required>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('platform-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ المنصة</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Payment Method Modal -->
     <div id="payment-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>طريقة دفع جديدة</span>
-                <button class="modal-close" onclick="closeModal('payment-modal')">&times;</button>
+                <span>إضافة طريقة دفع</span>
+                <button class="modal-close" onclick="closeModal('payment-modal')">×</button>
             </div>
             <form id="payment-form">
                 <div class="form-group">
@@ -1431,26 +501,25 @@
                     <input type="text" id="payment-name" required>
                 </div>
                 <div class="form-group">
-                    <label>رمز الدفع / الكود</label>
-                    <input type="text" id="payment-code" placeholder="مثال: LK123456" required>
-                </div>
-                <div class="form-group">
-                    <label>نوع الدفع</label>
+                    <label>النوع</label>
                     <select id="payment-type" required>
-                        <option value="">اختر النوع</option>
-                        <option value="card">بطاقة ائتمان</option>
-                        <option value="wallet">محفظة رقمية</option>
-                        <option value="bank">تحويل بنكي</option>
-                        <option value="crypto">عملات رقمية</option>
+                        <option value="كرت ائتماني">كرت ائتماني</option>
+                        <option value="محفظة رقمية">محفظة رقمية</option>
+                        <option value="تحويل بنكي">تحويل بنكي</option>
+                        <option value="عملة رقمية">عملة رقمية</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>معلومات إضافية</label>
-                    <textarea id="payment-info" placeholder="معلومات الحساب أو البيانات الإضافية" rows="3"></textarea>
+                    <label>كود الدفع</label>
+                    <input type="text" id="payment-code" placeholder="مثال: CARD001" required>
+                </div>
+                <div class="form-group">
+                    <label>التعليمات</label>
+                    <textarea id="payment-instructions" rows="3" placeholder="شرح طريقة الدفع"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('payment-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ الطريقة</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
