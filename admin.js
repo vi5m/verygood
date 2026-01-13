@@ -13,6 +13,7 @@ let adminData = {
   payments: [],
   orders: [],
   messages: [],
+  trustImages: [],
   settings: {
     storeName: "متجر الخدمات",
     storeDescription: "متجر متخصص في خدمات التواصل الاجتماعي",
@@ -214,6 +215,9 @@ function setupEventListeners() {
 
   // Theme toggle
   document.getElementById("themeToggle")?.addEventListener("click", toggleTheme)
+
+  // Trust Image Modal
+  document.getElementById("addTrustImageBtn")?.addEventListener("click", openTrustImageModal)
 }
 
 function handleNavigation(e) {
@@ -311,6 +315,7 @@ function renderOrders() {
         </select>
       </td>
       <td>
+        <button class="btn-small" onclick="viewOrderDetails('${order.id}')">عرض</button>
         <button class="btn-small btn-danger" onclick="deleteOrder('${order.id}')">حذف</button>
       </td>
     </tr>
@@ -846,6 +851,158 @@ function logout() {
     sessionStorage.removeItem("adminSession")
     location.reload()
   }
+}
+
+function viewOrderDetails(orderId) {
+  const order = adminData.orders.find((o) => o.id == orderId)
+  if (!order) return
+
+  const modal = document.createElement("div")
+  modal.className = "modal"
+  modal.style.cssText =
+    "display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 5000; align-items: center; justify-content: center;"
+
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto; background: var(--bg-dark); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; color: var(--primary-color);">تفاصيل الطلب #${order.id}</h2>
+        <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-dark);">&times;</button>
+      </div>
+      
+      <div style="background: var(--border-color); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <h3 style="color: var(--primary-color); margin-top: 0;">بيانات العميل</h3>
+        <p><strong>الاسم:</strong> ${order.name}</p>
+        <p><strong>البريد:</strong> ${order.email}</p>
+        <p><strong>الهاتف:</strong> ${order.phone}</p>
+        <p><strong>الدولة:</strong> ${order.country}</p>
+        <p><strong>التاريخ:</strong> ${order.date}</p>
+      </div>
+      
+      <div style="background: var(--border-color); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <h3 style="color: var(--primary-color); margin-top: 0;">الخدمات</h3>
+        ${
+          order.items
+            ? order.items
+                .map(
+                  (item) => `
+          <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+            <span>${item.name}</span>
+            <span style="color: var(--primary-color);">${item.price} ${item.currency}</span>
+          </div>
+        `,
+                )
+                .join("")
+            : `<p>${order.serviceName}</p>`
+        }
+      </div>
+      
+      <div style="background: var(--border-color); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <h3 style="color: var(--primary-color); margin-top: 0;">الدفع</h3>
+        <p><strong>طريقة الدفع:</strong> ${order.paymentMethod}</p>
+        <p><strong>الكود:</strong> <code style="background: var(--bg-dark); padding: 0.25rem 0.5rem; border-radius: 3px; font-weight: bold; color: var(--primary-color);">${order.paymentCode}</code></p>
+        <p><strong>الإجمالي:</strong> ${order.total} ${order.currency}</p>
+        <p><strong>الحالة:</strong> <span style="background: var(--primary-color); color: var(--bg-dark); padding: 0.25rem 0.75rem; border-radius: 5px; font-weight: bold;">${order.status}</span></p>
+      </div>
+      
+      ${
+        order.paymentProof
+          ? `
+        <div style="background: var(--border-color); padding: 1.5rem; border-radius: 10px;">
+          <h3 style="color: var(--primary-color); margin-top: 0;">صورة الدفع</h3>
+          <img src="${order.paymentProof}" style="max-width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">تم رفع صورة الدفع بنجاح</p>
+        </div>
+      `
+          : `
+        <div style="background: var(--border-color); padding: 1.5rem; border-radius: 10px; text-align: center;">
+          <p style="color: var(--text-secondary);">لم يتم رفع صورة الدفع بعد</p>
+        </div>
+      `
+      }
+    </div>
+  `
+
+  document.body.appendChild(modal)
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.remove()
+  })
+}
+
+function openTrustImageModal() {
+  document.getElementById("trustImageModal").classList.remove("hidden")
+}
+
+function closeTrustImageModal() {
+  document.getElementById("trustImageModal").classList.add("hidden")
+}
+
+function previewTrustImage() {
+  const fileInput = document.getElementById("trustImageFile")
+  const preview = document.getElementById("trustImagePreview")
+
+  if (fileInput.files[0]) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      preview.src = e.target.result
+      preview.style.display = "block"
+    }
+    reader.readAsDataURL(fileInput.files[0])
+  }
+}
+
+function saveTrustImage() {
+  const title = document.getElementById("trustImageTitle").value.trim()
+  const description = document.getElementById("trustImageDescription").value.trim()
+  const preview = document.getElementById("trustImagePreview")
+
+  if (!title || !preview.src || preview.style.display === "none") {
+    alert("يرجى ملء جميع الحقول واختيار صورة")
+    return
+  }
+
+  if (!adminData.trustImages) {
+    adminData.trustImages = []
+  }
+
+  adminData.trustImages.push({
+    id: Date.now(),
+    title,
+    description,
+    image: preview.src,
+    date: new Date().toLocaleString("ar-SA"),
+  })
+
+  localStorage.setItem("admin_data", JSON.stringify(adminData))
+  localStorage.setItem("admin_trust_images", JSON.stringify(adminData.trustImages))
+
+  document.getElementById("trustImageTitle").value = ""
+  document.getElementById("trustImageDescription").value = ""
+  document.getElementById("trustImageFile").value = ""
+  preview.style.display = "none"
+
+  closeTrustImageModal()
+  renderTrustImagesOnly()
+
+  showNotification("تم إضافة صورة الثقة بنجاح", "success")
+}
+
+function showNotification(message, type = "success") {
+  const notification = document.createElement("div")
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === "success" ? "var(--success)" : "var(--danger)"};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    z-index: 4000;
+    animation: slideIn 0.3s ease-out;
+  `
+  notification.textContent = message
+  document.body.appendChild(notification)
+
+  setTimeout(() => notification.remove(), 3000)
 }
 
 // Add CSS for admin panel

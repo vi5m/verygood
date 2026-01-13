@@ -316,8 +316,30 @@
             
             <!-- Success Container for Order Completion -->
             <div id="success-container">
-                <h2 style="margin-bottom: 1rem;">شكراً لطلبك!</h2>
-                <p>تم إتمام طلبك بنجاح.</p>
+                <div style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 2rem; border-radius: 15px; text-align: center; color: white; margin-bottom: 2rem;">
+                    <h2 style="margin: 0 0 1rem 0;">تم إرسال الطلب بنجاح</h2>
+                    <p style="margin: 0; font-size: 0.95rem;">شكراً على طلبك</p>
+                </div>
+                
+                <!-- Added payment proof upload section after successful order -->
+                <div class="checkout-form">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">ارسل صورة عملية الدفع</h3>
+                    <p style="color: var(--text-dark); margin-bottom: 1rem;">يرجى إرسال صورة توضح عملية الدفع الخاصة بك</p>
+                    
+                    <div class="form-group">
+                        <label>صورة الدفع</label>
+                        <input type="file" id="paymentProofFile" accept="image/*" onchange="previewPaymentProof()">
+                        <img id="paymentProofPreview" style="max-width: 100%; margin-top: 10px; display: none; border-radius: 8px;">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="uploadPaymentProof()" style="width: 100%; padding: 1rem;">
+                        <i class="fas fa-upload"></i> رفع الصورة
+                    </button>
+                    
+                    <button class="btn-secondary" onclick="skipPaymentProof()" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+                        تخطي
+                    </button>
+                </div>
             </div>
         </section>
     </div>

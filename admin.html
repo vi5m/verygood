@@ -256,7 +256,8 @@
       <div class="page-content hidden" id="trustPage">
         <div class="page-header">
           <h1>صور الثقة</h1>
-          <!-- Removed the add trust image button -->
+          <!-- Added button to open trust image upload modal -->
+          <button class="btn-primary" onclick="openTrustImageModal()">إضافة صورة ثقة</button>
         </div>
         <div id="trustImagesContainer">
           <!-- Trust images will be rendered here -->
@@ -393,6 +394,35 @@
       <div class="modal-footer">
         <button class="btn-secondary" id="cancelPaymentBtn">إلغاء</button>
         <button class="btn-primary" id="savePaymentBtn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Trust Image Upload -->
+  <div class="modal hidden" id="trustImageModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>إضافة صورة ثقة</h2>
+        <button class="close-btn" onclick="closeTrustImageModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>عنوان الصورة</label>
+          <input type="text" id="trustImageTitle" placeholder="مثال: عملية بيع ناجحة">
+        </div>
+        <div class="form-group">
+          <label>وصف الصورة</label>
+          <textarea id="trustImageDescription" placeholder="وصف الصورة"></textarea>
+        </div>
+        <div class="form-group">
+          <label>اختر الصورة</label>
+          <input type="file" id="trustImageFile" accept="image/*" onchange="previewTrustImage()">
+          <img id="trustImagePreview" style="max-width: 100%; margin-top: 10px; display: none; border-radius: 8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeTrustImageModal()">إلغاء</button>
+        <button class="btn-primary" onclick="saveTrustImage()">حفظ</button>
       </div>
     </div>
   </div>
