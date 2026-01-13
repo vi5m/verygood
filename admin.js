@@ -1,28 +1,19 @@
-// Admin Configuration
+// Admin Configuration & Data Management
 const ADMIN_CONFIG = {
   adminUsername: "admin",
   adminPassword: "admin123",
   defaultCurrencies: ["SAR", "AED", "USD", "OMR"],
-  defaultPlatforms: [
-    { id: "platform_tiktok", name: "TikTok", icon: "fab fa-tiktok", color: "#25F4EE" },
-    { id: "platform_instagram", name: "Instagram", icon: "fab fa-instagram", color: "#E4405F" },
-    { id: "platform_facebook", name: "Facebook", icon: "fab fa-facebook", color: "#1877F2" },
-    { id: "platform_youtube", name: "YouTube", icon: "fab fa-youtube", color: "#FF0000" },
-    { id: "platform_twitter", name: "Twitter/X", icon: "fab fa-x-twitter", color: "#000000" },
-    { id: "platform_linkedin", name: "LinkedIn", icon: "fab fa-linkedin", color: "#0A66C2" },
-  ],
 }
 
 let adminSession = null
 let editingServiceId = null
-let editingProductId = null
+const editingProductId = null
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[v0] Admin initializing...")
   initializeTheme()
   checkAdminAuth()
   initializeEventListeners()
-  loadDefaultData()
+  console.log("[v0] Admin panel initialized")
 })
 
 function initializeTheme() {
@@ -43,19 +34,12 @@ function toggleTheme() {
   localStorage.setItem("theme", theme)
 }
 
-function loadDefaultData() {
-  const platforms = JSON.parse(localStorage.getItem("admin_platforms")) || []
-  if (platforms.length === 0) {
-    localStorage.setItem("admin_platforms", JSON.stringify(ADMIN_CONFIG.defaultPlatforms))
-    console.log("[v0] Default platforms loaded")
-  }
-}
-
 function checkAdminAuth() {
   const session = localStorage.getItem("adminSession")
   if (session) {
     adminSession = session
     showAdminDashboard()
+    loadDashboardData()
   } else {
     showLoginPage()
   }
@@ -69,7 +53,6 @@ function showLoginPage() {
 function showAdminDashboard() {
   document.getElementById("login-page").classList.remove("active")
   document.getElementById("admin-page").classList.add("active")
-  switchAdminPage("dashboard")
   loadDashboardData()
 }
 
@@ -81,34 +64,28 @@ function initializeEventListeners() {
 
   const logoutBtn = document.getElementById("logout-btn")
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault()
-      handleAdminLogout()
-    })
+    logoutBtn.addEventListener("click", handleAdminLogout)
   }
 
-  const menuLinks = document.querySelectorAll(".admin-menu-link")
-  menuLinks.forEach((link) => {
+  document.querySelectorAll(".admin-menu-link").forEach((link) => {
     link.addEventListener("click", (e) => {
-      if (link.id !== "logout-btn") {
-        e.preventDefault()
-        const page = link.getAttribute("data-page")
-        if (page) {
-          switchAdminPage(page)
-        }
+      e.preventDefault()
+      const page = link.dataset.page
+      switchAdminPage(page)
+    })
+  })
+
+  document.querySelectorAll(".modal-overlay").forEach((modal) => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("active")
       }
     })
   })
 
-  // Form submissions
   const serviceForm = document.getElementById("service-form")
   if (serviceForm) {
     serviceForm.addEventListener("submit", saveService)
-  }
-
-  const productForm = document.getElementById("product-form")
-  if (productForm) {
-    productForm.addEventListener("submit", saveProduct)
   }
 
   const platformForm = document.getElementById("platform-form")
@@ -126,22 +103,7 @@ function initializeEventListeners() {
     settingsForm.addEventListener("submit", saveSettings)
   }
 
-  // Modal close buttons
-  document.querySelectorAll(".modal-close").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const modal = e.target.closest(".modal-overlay")
-      if (modal) modal.classList.remove("active")
-    })
-  })
-
-  // Close modals on overlay click
-  document.querySelectorAll(".modal-overlay").forEach((modal) => {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.remove("active")
-      }
-    })
-  })
+  loadSettingsForm()
 }
 
 function handleAdminLogin(e) {
@@ -171,19 +133,13 @@ function handleAdminLogout() {
 }
 
 function switchAdminPage(page) {
-  console.log("[v0] Switching to page:", page)
-
-  // Update menu active state
   document.querySelectorAll(".admin-menu-link").forEach((link) => {
-    const linkPage = link.getAttribute("data-page")
-    if (linkPage === page) {
+    link.classList.remove("active")
+    if (link.dataset.page === page) {
       link.classList.add("active")
-    } else {
-      link.classList.remove("active")
     }
   })
 
-  // Hide all pages then show selected page
   document.querySelectorAll(".admin-page").forEach((p) => {
     p.classList.remove("active")
   })
@@ -191,13 +147,9 @@ function switchAdminPage(page) {
   const targetPage = document.getElementById(page + "-page")
   if (targetPage) {
     targetPage.classList.add("active")
-    console.log("[v0] Page displayed:", page + "-page")
   }
 
-  // Load data for the page
-  if (page === "dashboard") loadDashboardData()
   if (page === "orders") loadOrders()
-  if (page === "products") loadProducts()
   if (page === "services") loadServices()
   if (page === "platforms") loadPlatforms()
   if (page === "payments") loadPaymentMethods()
@@ -209,15 +161,14 @@ function loadDashboardData() {
   const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
   const services = JSON.parse(localStorage.getItem("admin_services")) || []
   const platforms = JSON.parse(localStorage.getItem("admin_platforms")) || []
-  const products = JSON.parse(localStorage.getItem("admin_products")) || []
 
   document.getElementById("stat-orders").textContent = orders.length
   document.getElementById("stat-services").textContent = services.length
   document.getElementById("stat-platforms").textContent = platforms.length
-  document.getElementById("stat-products").textContent = products.length
+  document.getElementById("stat-pending").textContent = orders.filter((o) => o.status === "pending").length
 }
 
-// ===== SERVICES MANAGEMENT =====
+// Services Management
 function openServiceModal(serviceId = null) {
   editingServiceId = serviceId
   const form = document.getElementById("service-form")
@@ -314,121 +265,7 @@ function deleteService(serviceId) {
   }
 }
 
-// ===== PRODUCTS MANAGEMENT =====
-function openProductModal(productId = null) {
-  editingProductId = productId
-  const form = document.getElementById("product-form")
-  form.reset()
-
-  if (productId) {
-    const products = JSON.parse(localStorage.getItem("admin_products")) || []
-    const product = products.find((p) => p.id === productId)
-    if (product) {
-      document.getElementById("product-name").value = product.name
-      document.getElementById("product-price").value = product.price
-      document.getElementById("product-currency").value = product.currency
-      document.getElementById("product-stock").value = product.stock
-      document.getElementById("product-category").value = product.category
-      document.getElementById("product-description").value = product.description
-      if (product.image) {
-        document.getElementById("product-image-preview").src = product.image
-        document.getElementById("product-image-preview").style.display = "block"
-      }
-    }
-  }
-
-  document.getElementById("product-modal").classList.add("active")
-}
-
-function saveProduct(e) {
-  e.preventDefault()
-
-  const imageInput = document.getElementById("product-image")
-  const reader = new FileReader()
-
-  reader.onload = (event) => {
-    const product = {
-      id: editingProductId || "product_" + Date.now(),
-      name: document.getElementById("product-name").value,
-      price: Number.parseFloat(document.getElementById("product-price").value),
-      currency: document.getElementById("product-currency").value,
-      stock: Number.parseInt(document.getElementById("product-stock").value),
-      category: document.getElementById("product-category").value,
-      description: document.getElementById("product-description").value,
-      image: event.target.result || (editingProductId ? document.getElementById("product-image-preview").src : ""),
-      createdAt: new Date().toISOString(),
-    }
-
-    let products = JSON.parse(localStorage.getItem("admin_products")) || []
-
-    if (editingProductId) {
-      products = products.map((p) => (p.id === editingProductId ? product : p))
-      showNotification("تم تحديث المنتج بنجاح", "success")
-    } else {
-      products.push(product)
-      showNotification("تم إضافة المنتج بنجاح", "success")
-    }
-
-    localStorage.setItem("admin_products", JSON.stringify(products))
-    closeModal("product-modal")
-    loadProducts()
-    loadDashboardData()
-    editingProductId = null
-  }
-
-  if (imageInput.files.length > 0) {
-    reader.readAsDataURL(imageInput.files[0])
-  } else {
-    reader.onload({ target: { result: "" } })
-  }
-}
-
-function loadProducts() {
-  const products = JSON.parse(localStorage.getItem("admin_products")) || []
-  const tbody = document.getElementById("products-table-body")
-  tbody.innerHTML = ""
-
-  if (products.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">لا توجد منتجات</td></tr>'
-    return
-  }
-
-  products.forEach((product) => {
-    const row = document.createElement("tr")
-    row.innerHTML = `
-      <td><img src="${product.image}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;"></td>
-      <td>${product.name}</td>
-      <td>${product.category}</td>
-      <td>${product.price} ${product.currency}</td>
-      <td>${product.stock}</td>
-      <td>${product.description || "-"}</td>
-      <td>
-        <div class="action-buttons">
-          <button class="btn-small btn-edit" onclick="openProductModal('${product.id}')">
-            <i class="fas fa-edit"></i> تعديل
-          </button>
-          <button class="btn-small btn-delete" onclick="deleteProduct('${product.id}')">
-            <i class="fas fa-trash"></i> حذف
-          </button>
-        </div>
-      </td>
-    `
-    tbody.appendChild(row)
-  })
-}
-
-function deleteProduct(productId) {
-  if (confirm("هل تريد حذف هذا المنتج؟")) {
-    let products = JSON.parse(localStorage.getItem("admin_products")) || []
-    products = products.filter((p) => p.id !== productId)
-    localStorage.setItem("admin_products", JSON.stringify(products))
-    loadProducts()
-    loadDashboardData()
-    showNotification("تم حذف المنتج", "success")
-  }
-}
-
-// ===== PLATFORMS MANAGEMENT =====
+// Platforms Management
 function openPlatformModal() {
   document.getElementById("platform-form").reset()
   document.getElementById("platform-modal").classList.add("active")
@@ -513,41 +350,40 @@ function deletePlatform(platformId) {
   }
 }
 
-// ===== ORDERS MANAGEMENT =====
+// Orders Management
 function loadOrders() {
   const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
   const tbody = document.getElementById("orders-table-body")
   tbody.innerHTML = ""
 
   if (orders.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">لا توجد طلبات</td></tr>'
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">لا توجد طلبات</td></tr>'
     return
   }
 
   orders.forEach((order) => {
     const row = document.createElement("tr")
     row.innerHTML = `
-      <td>#${order.id.substring(0, 8)}</td>
+      <td>#${order.id}</td>
       <td>${order.customerName}</td>
       <td>${order.total} ${order.currency}</td>
       <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
       <td>${new Date(order.date).toLocaleDateString("ar-SA")}</td>
-      <td>${order.paymentMethod}</td>
       <td>
         <div class="action-buttons">
           ${
             order.status === "pending"
               ? `
-            <button class="btn-small btn-approve" onclick="updateOrderStatus('${order.id}', 'approved')">
+            <button class="btn-small btn-approve" onclick="updateOrderStatus('${order.id}', 'approved')" title="الموافقة">
               <i class="fas fa-check"></i> موافق
             </button>
-            <button class="btn-small btn-reject" onclick="updateOrderStatus('${order.id}', 'rejected')">
+            <button class="btn-small btn-reject" onclick="updateOrderStatus('${order.id}', 'rejected')" title="الرفض">
               <i class="fas fa-times"></i> رفض
             </button>
           `
-              : ""
+              : `<span class="status-badge status-${order.status}">${getStatusText(order.status)}</span>`
           }
-          <button class="btn-small btn-delete" onclick="deleteOrder('${order.id}')">
+          <button class="btn-small btn-delete" onclick="deleteOrder('${order.id}')" title="حذف">
             <i class="fas fa-trash"></i> حذف
           </button>
         </div>
@@ -590,7 +426,7 @@ function deleteOrder(orderId) {
   }
 }
 
-// ===== PAYMENT METHODS MANAGEMENT =====
+// Payment Methods Management
 function openPaymentModal() {
   document.getElementById("payment-form").reset()
   document.getElementById("payment-modal").classList.add("active")
@@ -656,7 +492,7 @@ function deletePayment(paymentId) {
   }
 }
 
-// ===== CONTACT MESSAGES =====
+// Contact Messages
 function loadContactMessages() {
   const messages = JSON.parse(localStorage.getItem("contact_messages")) || []
   const tbody = document.getElementById("contact-table-body")
@@ -676,10 +512,10 @@ function loadContactMessages() {
       <td>${new Date(msg.date).toLocaleDateString("ar-SA")}</td>
       <td>
         <div class="action-buttons">
-          <button class="btn-small btn-edit" onclick="viewMessage('${msg.id}')">
+          <button class="btn-small btn-edit" onclick="viewMessage('${msg.id}')" title="عرض">
             <i class="fas fa-eye"></i>
           </button>
-          <button class="btn-small btn-delete" onclick="deleteMessage('${msg.id}')">
+          <button class="btn-small btn-delete" onclick="deleteMessage('${msg.id}')" title="حذف">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -707,7 +543,7 @@ function deleteMessage(messageId) {
   }
 }
 
-// ===== SETTINGS =====
+// Settings
 function loadSettingsForm() {
   const settings = JSON.parse(localStorage.getItem("store_settings")) || {}
   document.getElementById("whatsapp-link").value = settings.whatsapp || ""
@@ -734,14 +570,12 @@ function saveSettings(e) {
   showNotification("تم حفظ الإعدادات بنجاح", "success")
 }
 
-// ===== UTILITIES =====
+// Modal Functions
 function closeModal(modalId) {
-  const modal = document.getElementById(modalId)
-  if (modal) {
-    modal.classList.remove("active")
-  }
+  document.getElementById(modalId).classList.remove("active")
 }
 
+// Notification System
 function showNotification(message, type = "success") {
   const notification = document.createElement("div")
   notification.className = `notification ${type}`
@@ -752,25 +586,5 @@ function showNotification(message, type = "success") {
     notification.remove()
   }, 3000)
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const productImageInput = document.getElementById("product-image")
-  if (productImageInput) {
-    productImageInput.addEventListener("change", (e) => {
-      const file = e.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          const preview = document.getElementById("product-image-preview")
-          if (preview) {
-            preview.src = event.target.result
-            preview.style.display = "block"
-          }
-        }
-        reader.readAsDataURL(file)
-      }
-    })
-  }
-})
 
 console.log("[v0] Admin script loaded successfully")
