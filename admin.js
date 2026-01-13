@@ -29,9 +29,6 @@ let editingServiceId = null
 let editingProductId = null
 let editingPlatformId = null
 
-// Trust Images Management
-const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
-
 // Initialize Admin Panel
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[v0] Admin panel initializing...")
@@ -42,80 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoginPage()
   } else {
     loadAdminPanel()
-  }
-
-  // Event Listeners for Trust Images
-  const addTrustBtn = document.getElementById("addTrustImageBtn")
-  const trustForm = document.getElementById("trustImageForm")
-  const cancelTrustBtn = document.getElementById("cancelTrustBtn")
-  const trustFormContainer = document.getElementById("trustFormContainer")
-  const trustImageFile = document.getElementById("trustImageFile")
-  const trustImagePreview = document.getElementById("trustImagePreview")
-
-  if (addTrustBtn) {
-    addTrustBtn.addEventListener("click", () => {
-      trustFormContainer.style.display = "block"
-      trustForm.reset()
-      trustImagePreview.innerHTML = ""
-    })
-  }
-
-  if (cancelTrustBtn) {
-    cancelTrustBtn.addEventListener("click", () => {
-      trustFormContainer.style.display = "none"
-      trustForm.reset()
-      trustImagePreview.innerHTML = ""
-    })
-  }
-
-  if (trustImageFile) {
-    trustImageFile.addEventListener("change", (e) => {
-      const file = e.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          trustImagePreview.innerHTML = `<img src="${event.target.result}" alt="معاينة">`
-        }
-        reader.readAsDataURL(file)
-      }
-    })
-  }
-
-  if (trustForm) {
-    trustForm.addEventListener("submit", (e) => {
-      e.preventDefault()
-
-      const file = trustImageFile.files[0]
-      if (!file) {
-        alert("يرجى اختيار صورة")
-        return
-      }
-
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const newTrustImage = {
-          title: document.getElementById("trustTitle").value,
-          description: document.getElementById("trustDescription").value,
-          image: event.target.result,
-          date: new Date().toLocaleDateString("ar-SA"),
-        }
-
-        trustImages.push(newTrustImage)
-        localStorage.setItem("trustImages", JSON.stringify(trustImages))
-
-        showNotification("تم إضافة صورة الثقة بنجاح", "success")
-
-        // إغلاق النموذج وتنظيف المدخلات
-        trustFormContainer.style.display = "none"
-        trustImagePreview.innerHTML = ""
-        trustForm.reset()
-
-        // تحديث معرض الصور
-        renderTrustImages()
-      }
-
-      reader.readAsDataURL(file)
-    })
   }
 })
 
@@ -295,17 +218,7 @@ function handleNavigation(e) {
 
   const page = e.target.closest(".nav-item").dataset.page
 
-  if (page === "trust") {
-    showTrustPage()
-  } else {
-    showPage(page)
-  }
-}
-
-function showTrustPage() {
-  document.querySelectorAll(".page-content").forEach((p) => p.classList.add("hidden"))
-  document.getElementById("trustPage").classList.remove("hidden")
-  renderTrustImages()
+  showPage(page)
 }
 
 function showPage(page) {
@@ -349,6 +262,10 @@ function showPage(page) {
     case "settings":
       pageId = "settingsPage"
       loadSettings()
+      break
+    case "trust":
+      pageId = "trustPage"
+      renderTrustImagesOnly()
       break
   }
 
@@ -840,16 +757,17 @@ function saveSettings() {
   alert("تم حفظ الإعدادات بنجاح")
 }
 
-function renderTrustImages() {
-  const gallery = document.getElementById("trustImagesGallery")
+function renderTrustImagesOnly() {
+  const container = document.getElementById("trustImagesContainer")
+  const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
 
   if (trustImages.length === 0) {
-    gallery.innerHTML =
+    container.innerHTML =
       '<p style="text-align: center; color: var(--text-muted); padding: 40px;">لا توجد صور ثقة حتى الآن</p>'
     return
   }
 
-  gallery.innerHTML = trustImages
+  container.innerHTML = trustImages
     .map(
       (img, index) => `
     <div class="trust-image-card">
@@ -871,9 +789,10 @@ function renderTrustImages() {
 
 function deleteTrustImage(index) {
   if (confirm("هل تريد حذف هذه الصورة؟")) {
+    const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
     trustImages.splice(index, 1)
     localStorage.setItem("trustImages", JSON.stringify(trustImages))
-    renderTrustImages()
+    renderTrustImagesOnly()
     alert("تم حذف الصورة بنجاح")
   }
 }
@@ -1315,17 +1234,6 @@ if (!document.querySelector("style[data-admin-styles]")) {
   style.setAttribute("data-admin-styles", "true")
   style.textContent = adminStyles
   document.head.appendChild(style)
-}
-
-function showNotification(message, type) {
-  const notification = document.createElement("div")
-  notification.className = `notification ${type}`
-  notification.textContent = message
-  document.body.appendChild(notification)
-
-  setTimeout(() => {
-    document.body.removeChild(notification)
-  }, 3000)
 }
 
 console.log("[v0] Admin panel script loaded successfully")

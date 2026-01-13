@@ -241,14 +241,10 @@
       <!-- Trust Images Page -->
       <div class="page-content hidden" id="trustPage">
         <div class="page-header">
-          <h1>إدارة صور الثقة</h1>
-          <button class="btn-primary" id="addTrustImageBtn">
-            <i class="fas fa-plus"></i> إضافة صورة ثقة
-          </button>
+          <h1>صور الثقة</h1>
+          <!-- Removed the add trust image button -->
         </div>
-
-        <!-- Trust Images Gallery -->
-        <div class="trust-images-gallery" id="trustImagesGallery">
+        <div id="trustImagesContainer">
           <!-- Trust images will be rendered here -->
         </div>
       </div>
@@ -384,30 +380,6 @@
         <button class="btn-secondary" id="cancelPaymentBtn">إلغاء</button>
         <button class="btn-primary" id="savePaymentBtn">حفظ</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Trust Image Modal -->
-  <div id="trustImageModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>إضافة صورة ثقة</h2>
-        <button class="close-modal">&times;</button>
-      </div>
-      <div class="form-group">
-        <label>عنوان الصورة</label>
-        <input type="text" id="trustTitle" placeholder="مثال: عملية بيع ناجحة">
-      </div>
-      <div class="form-group">
-        <label>وصف الصورة</label>
-        <textarea id="trustDescription" placeholder="وصف العملية أو النتيجة"></textarea>
-      </div>
-      <div class="form-group">
-        <label>الصورة</label>
-        <input type="file" id="trustImageInput" accept="image/*">
-        <img id="trustImagePreview" style="max-width: 100%; margin-top: 10px; display: none;">
-      </div>
-      <button class="btn-primary" onclick="saveTrustImage()">حفظ الصورة</button>
     </div>
   </div>
 

@@ -1024,5 +1024,5 @@ body {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: rgba(255, 149, 0, 0.05); /* Corrected missing value and closing parenthesis */
+  background: rgba(255, 149, 0, 0.05);
 }
