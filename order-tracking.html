@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متابعة الطلبات - متجر فهد</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <i class="fas fa-store"></i>
+        <span id="storeName">متجر فهد</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a></li>
+        <li><a href="trust.html" class="nav-link"><i class="fas fa-shield-alt"></i> صور الثقة</a></li>
+        <li><a href="order-tracking.html" class="nav-link active"><i class="fas fa-tracking"></i> متابعة الطلبات</a></li>
+        <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> عن المتجر</a></li>
+        <li><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> اتصل بنا</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+        <a href="admin.html" class="admin-link" title="لوحة التحكم"><i class="fas fa-cog"></i></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <section class="tracking-section" style="padding: 2rem 0;">
+      <div class="tracking-header" style="margin-bottom: 3rem;">
+        <h1 style="color: var(--text-dark); margin-bottom: 0.5rem;">متابعة الطلبات</h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">تتبع حالة طلبك وعمليات الدفع</p>
+      </div>
+
+      <!-- Search/Filter Section -->
+      <div style="background: var(--border-color); padding: 2rem; border-radius: 15px; margin-bottom: 2rem; border: 1px solid var(--border-color);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">رقم الطلب أو البريد الإلكتروني</label>
+            <input type="text" id="searchInput" placeholder="ابحث عن طلبك..." style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">حالة الطلب</label>
+            <select id="statusFilter" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);">
+              <option value="">كل الطلبات</option>
+              <option value="قيد الانتظار">قيد الانتظار</option>
+              <option value="تم الموافقة">تم الموافقة</option>
+              <option value="مرفوض">مرفوض</option>
+              <option value="مكتمل">مكتمل</option>
+            </select>
+          </div>
+          <button onclick="filterOrders()" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+            <i class="fas fa-search"></i> بحث
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders List -->
+      <div id="ordersList" style="display: grid; gap: 1.5rem;">
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+          <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+          <p style="font-size: 1.1rem;">لا توجد طلبات</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;"><a href="index.html" style="color: var(--primary-color); text-decoration: none;">ابدأ بطلب جديد</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>عن المتجر</h4>
+        <p id="footerDescription">متجر متخصص في خدمات التواصل الاجتماعي</p>
+      </div>
+      <div class="footer-section">
+        <h4>الروابط</h4>
+        <ul>
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="trust.html">صور الثقة</a></li>
+          <li><a href="order-tracking.html">متابعة الطلبات</a></li>
+          <li><a href="about.html">عن المتجر</a></li>
+          <li><a href="contact.html">اتصل بنا</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>تابعنا</h4>
+        <ul>
+          <li><a href="#" id="instagramLink"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#" id="whatsappLink"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+          <li><a href="#" id="telegramLink"><i class="fab fa-telegram"></i> Telegram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 متجر فهد. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Load orders and display them
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
+      const ordersList = document.getElementById("ordersList");
+
+      if (orders.length === 0) {
+        ordersList.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p style="font-size: 1.1rem;">لا توجد طلبات</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;"><a href="index.html" style="color: var(--primary-color); text-decoration: none;">ابدأ بطلب جديد</a></p>
+          </div>
+        `;
+        return;
+      }
+
+      ordersList.innerHTML = orders
+        .map((order, index) => {
+          const statusColors = {
+            "قيد الانتظار": "#f39c12",
+            "تم الموافقة": "#27ae60",
+            "مرفوض": "#e74c3c",
+            "مكتمل": "#2980b9",
+          };
+
+          return `
+            <div style="background: var(--border-color); padding: 1.5rem; border-radius: 15px; border: 1px solid var(--border-color);">
+              <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="color: var(--text-dark); margin-bottom: 0.5rem;">الطلب #${index + 1}</h3>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-envelope"></i> ${order.email}
+                  </p>
+                </div>
+                <div>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-calendar"></i> ${new Date(order.date).toLocaleDateString("ar-SA")}
+                  </p>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-money-bill"></i> ${order.total} ${order.currency}
+                  </p>
+                </div>
+                <div style="text-align: center;">
+                  <span style="display: inline-block; padding: 0.5rem 1rem; background: ${statusColors[order.status] || "#95a5a6"}; color: white; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                    ${order.status}
+                  </span>
+                </div>
+              </div>
+
+              <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                  <strong>العميل:</strong> ${order.name}
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                  <strong>الهاتف:</strong> ${order.phone}
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                  <strong>طريقة الدفع:</strong> ${order.paymentMethod} ${order.paymentCode ? `(${order.paymentCode})` : ''}
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                  <strong>الخدمات:</strong> ${order.items.map(item => item.name).join(", ")}
+                </p>
+              </div>
+
+              ${order.paymentProof ? `
+                <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                  <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">
+                    <i class="fas fa-image"></i> صورة الدفع
+                  </p>
+                  <img src="${order.paymentProof}" alt="صورة الدفع" style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" onclick="viewImage('${order.paymentProof}')">
+                </div>
+              ` : ''}
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button onclick="viewOrderDetails(${index})" style="padding: 0.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                  <i class="fas fa-eye"></i> عرض التفاصيل
+                </button>
+                <button onclick="downloadOrderInfo(${index})" style="padding: 0.5rem; background: var(--secondary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                  <i class="fas fa-download"></i> تحميل الفاتورة
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function filterOrders() {
+      const searchInput = document.getElementById("searchInput").value.toLowerCase();
+      const statusFilter = document.getElementById("statusFilter").value;
+      const orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
+
+      const filtered = orders.filter(order => {
+        const matchSearch = order.email.includes(searchInput) || order.name.includes(searchInput);
+        const matchStatus = !statusFilter || order.status === statusFilter;
+        return matchSearch && matchStatus;
+      });
+
+      const ordersList = document.getElementById("ordersList");
+      if (filtered.length === 0) {
+        ordersList.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p style="font-size: 1.1rem;">لم يتم العثور على طلبات</p>
+          </div>
+        `;
+        return;
+      }
+
+      ordersList.innerHTML = filtered
+        .map((order, index) => {
+          const statusColors = {
+            "قيد الانتظار": "#f39c12",
+            "تم الموافقة": "#27ae60",
+            "مرفوض": "#e74c3c",
+            "مكتمل": "#2980b9",
+          };
+
+          return `
+            <div style="background: var(--border-color); padding: 1.5rem; border-radius: 15px; border: 1px solid var(--border-color);">
+              <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="color: var(--text-dark); margin-bottom: 0.5rem;">الطلب #${orders.indexOf(order) + 1}</h3>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-envelope"></i> ${order.email}
+                  </p>
+                </div>
+                <div>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-calendar"></i> ${new Date(order.date).toLocaleDateString("ar-SA")}
+                  </p>
+                  <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-money-bill"></i> ${order.total} ${order.currency}
+                  </p>
+                </div>
+                <div style="text-align: center;">
+                  <span style="display: inline-block; padding: 0.5rem 1rem; background: ${statusColors[order.status] || "#95a5a6"}; color: white; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                    ${order.status}
+                  </span>
+                </div>
+              </div>
+              ${order.paymentProof ? `
+                <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px;">
+                  <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">
+                    <i class="fas fa-image"></i> صورة الدفع
+                  </p>
+                  <img src="${order.paymentProof}" alt="صورة الدفع" style="max-width: 300px; max-height: 300px; border-radius: 8px;">
+                </div>
+              ` : ''}
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function viewImage(imageSrc) {
+      const modal = document.createElement("div");
+      modal.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000;";
+      modal.innerHTML = `
+        <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+          <img src="${imageSrc}" style="max-width: 100%; max-height: 100%; border-radius: 10px;">
+          <button onclick="this.closest('div').remove()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5rem;">×</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function downloadOrderInfo(index) {
+      const orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
+      const order = orders[index];
+      const info = `
+فاتورة الطلب #${index + 1}
+العميل: ${order.name}
+البريد: ${order.email}
+الهاتف: ${order.phone}
+التاريخ: ${new Date(order.date).toLocaleDateString("ar-SA")}
+الحالة: ${order.status}
+طريقة الدفع: ${order.paymentMethod}
+الخدمات: ${order.items.map(item => item.name).join(", ")}
+المجموع: ${order.total} ${order.currency}
+      `;
+      const blob = new Blob([info], { type: "text/plain" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `order-${index + 1}.txt`;
+      document.body.appendChild(a);
+      a.click();
+    }
+
+    // Load admin settings
+    function loadSettings() {
+      const adminData = JSON.parse(localStorage.getItem("admin_data")) || {};
+      if (adminData.settings) {
+        document.getElementById("storeName").textContent = adminData.settings.storeName || "متجر فهد";
+        document.getElementById("footerDescription").textContent =
+          adminData.settings.storeDescription || "متجر متخصص في خدمات التواصل الاجتماعي";
+      }
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      const theme = document.body.classList.contains("light-mode") ? "light" : "dark";
+      localStorage.setItem("theme", theme);
+      themeToggle.innerHTML = theme === "light" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    if (savedTheme === "light") {
+      document.body.classList.add("light-mode");
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    // Load on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      loadOrders();
+      loadSettings();
+    });
+  </script>
+</body>
+</html>
