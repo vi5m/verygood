@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صور الثقة - متجر فهد</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <i class="fas fa-store"></i>
+        <span id="storeName">متجر فهد</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a></li>
+        <li><a href="trust.html" class="nav-link active"><i class="fas fa-shield-alt"></i> صور الثقة</a></li>
+        <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> عن المتجر</a></li>
+        <li><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> اتصل بنا</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+        <a href="admin.html" class="admin-link" title="لوحة التحكم"><i class="fas fa-cog"></i></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Trust Header Section -->
+    <section class="trust-section">
+      <div class="trust-header">
+        <h1>صور الثقة والعمليات الناجحة</h1>
+        <p>شاهد العمليات الناجحة والعملاء الراضين الذين وثقوا بخدماتنا</p>
+      </div>
+
+      <!-- Trust Statistics -->
+      <div class="trust-stats">
+        <div class="trust-stat">
+          <h3 id="totalTransactions">0</h3>
+          <p>عمليات منجزة</p>
+        </div>
+        <div class="trust-stat">
+          <h3 id="satisfiedCustomers">0</h3>
+          <p>عميل راضي</p>
+        </div>
+        <div class="trust-stat">
+          <h3 id="successRate">100</h3>
+          <p>نسبة النجاح %</p>
+        </div>
+      </div>
+
+      <!-- Trust Images Gallery -->
+      <div class="trust-gallery" id="trustGallery">
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+          <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+          <p style="font-size: 1.1rem;">لم تُضف صور ثقة حتى الآن</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">سيتم عرض صور العمليات الناجحة هنا قريباً</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WhatsApp Channel Section -->
+    <section style="padding: 4rem 0; text-align: center;">
+      <h2 style="margin-bottom: 2rem; color: var(--text-dark);">هل تريد أن تصبح جزءاً من قصة النجاح؟</h2>
+      <a href="https://whatsapp.com/channel/0029VbCXW248qIzki3MIvE44" target="_blank" class="whatsapp-channel-btn">
+        <i class="fab fa-whatsapp"></i>
+        اتبع قناة متجر فهد على واتساب
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>عن المتجر</h4>
+        <p id="footerDescription">متجر متخصص في خدمات التواصل الاجتماعي</p>
+      </div>
+      <div class="footer-section">
+        <h4>الروابط</h4>
+        <ul>
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="trust.html">صور الثقة</a></li>
+          <li><a href="about.html">عن المتجر</a></li>
+          <li><a href="contact.html">اتصل بنا</a></li>
+          <li><a href="faq.html">الأسئلة الشائعة</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>تابعنا</h4>
+        <ul>
+          <li><a href="#" id="instagramLink"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#" id="whatsappLink"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+          <li><a href="#" id="telegramLink"><i class="fab fa-telegram"></i> Telegram</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>الدعم</h4>
+        <ul>
+          <li><a href="contact.html">راسلنا</a></li>
+          <li><a href="faq.html">الأسئلة الشائعة</a></li>
+          <li><a href="#" id="emailLink">البريد الإلكتروني</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 متجر فهد. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Load trust images from localStorage
+    function loadTrustImages() {
+      const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
+      const gallery = document.getElementById("trustGallery")
+
+      if (trustImages.length === 0) {
+        gallery.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+            <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p style="font-size: 1.1rem;">لم تُضف صور ثقة حتى الآن</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">سيتم عرض صور العمليات الناجحة هنا قريباً</p>
+          </div>
+        `
+        return
+      }
+
+      gallery.innerHTML = trustImages
+        .map(
+          (img) => `
+        <div class="trust-item">
+          <img src="${img.image}" alt="${img.title}" class="trust-image">
+          <div class="trust-content">
+            <h3>${img.title}</h3>
+            <p>${img.description}</p>
+            <small style="color: var(--text-secondary);">${img.date}</small>
+          </div>
+        </div>
+      `,
+        )
+        .join("")
+
+      // Update statistics
+      document.getElementById("totalTransactions").textContent = trustImages.length
+      document.getElementById("satisfiedCustomers").textContent = Math.max(
+        trustImages.length * 2,
+        1,
+      )
+    }
+
+    // Load admin settings
+    function loadSettings() {
+      const adminData = JSON.parse(localStorage.getItem("admin_data")) || {}
+      if (adminData.settings) {
+        document.getElementById("storeName").textContent = adminData.settings.storeName || "متجر فهد"
+        document.getElementById("footerDescription").textContent =
+          adminData.settings.storeDescription || "متجر متخصص في خدمات التواصل الاجتماعي"
+
+        // Set social links
+        if (adminData.settings.instagram) {
+          document.getElementById("instagramLink").href = adminData.settings.instagram
+        }
+        if (adminData.settings.whatsapp) {
+          document.getElementById("whatsappLink").href = `https://wa.me/${adminData.settings.whatsapp}`
+        }
+        if (adminData.settings.email) {
+          document.getElementById("emailLink").href = `mailto:${adminData.settings.email}`
+        }
+      }
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById("themeToggle")
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode")
+      const theme = document.body.classList.contains("light-mode") ? "light" : "dark"
+      localStorage.setItem("theme", theme)
+      themeToggle.innerHTML = theme === "light" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'
+    })
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem("theme") || "dark"
+    if (savedTheme === "light") {
+      document.body.classList.add("light-mode")
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>'
+    }
+
+    // Load on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      loadTrustImages()
+      loadSettings()
+    })
+  </script>
+</body>
+</html>

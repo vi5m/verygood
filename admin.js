@@ -29,6 +29,9 @@ let editingServiceId = null
 let editingProductId = null
 let editingPlatformId = null
 
+// Trust Images Management
+const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
+
 // Initialize Admin Panel
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[v0] Admin panel initializing...")
@@ -39,6 +42,71 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoginPage()
   } else {
     loadAdminPanel()
+  }
+
+  // Event Listeners for Trust Images
+  const addTrustBtn = document.getElementById("addTrustImageBtn")
+  const trustForm = document.getElementById("trustImageForm")
+  const cancelTrustBtn = document.getElementById("cancelTrustBtn")
+  const trustFormContainer = document.getElementById("trustFormContainer")
+  const trustImageFile = document.getElementById("trustImageFile")
+  const trustImagePreview = document.getElementById("trustImagePreview")
+
+  if (addTrustBtn) {
+    addTrustBtn.addEventListener("click", () => {
+      trustFormContainer.style.display = "block"
+      trustForm.reset()
+      trustImagePreview.innerHTML = ""
+    })
+  }
+
+  if (cancelTrustBtn) {
+    cancelTrustBtn.addEventListener("click", () => {
+      trustFormContainer.style.display = "none"
+      trustForm.reset()
+      trustImagePreview.innerHTML = ""
+    })
+  }
+
+  if (trustImageFile) {
+    trustImageFile.addEventListener("change", (e) => {
+      const file = e.target.files[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          trustImagePreview.innerHTML = `<img src="${event.target.result}" alt="معاينة">`
+        }
+        reader.readAsDataURL(file)
+      }
+    })
+  }
+
+  if (trustForm) {
+    trustForm.addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      const reader = new FileReader()
+      const file = trustImageFile.files[0]
+
+      reader.onload = (event) => {
+        const newTrustImage = {
+          title: document.getElementById("trustTitle").value,
+          description: document.getElementById("trustDescription").value,
+          image: event.target.result,
+          date: new Date().toLocaleDateString("ar-SA"),
+        }
+
+        trustImages.push(newTrustImage)
+        localStorage.setItem("trustImages", JSON.stringify(trustImages))
+
+        alert("تم إضافة صورة الثقة بنجاح")
+        trustFormContainer.style.display = "none"
+        trustForm.reset()
+        renderTrustImages()
+      }
+
+      reader.readAsDataURL(file)
+    })
   }
 })
 
@@ -175,10 +243,7 @@ function saveDataToStorage() {
 function setupEventListeners() {
   // Navigation
   document.querySelectorAll(".nav-item").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const page = btn.getAttribute("data-page")
-      switchPage(page)
-    })
+    btn.addEventListener("click", handleNavigation)
   })
 
   // Service Modal
@@ -206,10 +271,6 @@ function setupEventListeners() {
   document.getElementById("cancelPaymentBtn")?.addEventListener("click", closePaymentModal)
   document.getElementById("savePaymentBtn")?.addEventListener("click", savePayment)
 
-  // Trust Image Modal listeners
-  document.getElementById("addTrustImageBtn")?.addEventListener("click", openTrustImageModal)
-  document.getElementById("trustImageInput")?.addEventListener("change", previewTrustImage)
-
   // Settings
   document.getElementById("saveSettingsBtn")?.addEventListener("click", saveSettings)
 
@@ -220,7 +281,25 @@ function setupEventListeners() {
   document.getElementById("themeToggle")?.addEventListener("click", toggleTheme)
 }
 
-function switchPage(page) {
+function handleNavigation(e) {
+  if (!e.target.closest(".nav-item")) return
+
+  const page = e.target.closest(".nav-item").dataset.page
+
+  if (page === "trust") {
+    showTrustPage()
+  } else {
+    showPage(page)
+  }
+}
+
+function showTrustPage() {
+  document.querySelectorAll(".page-content").forEach((p) => p.classList.add("hidden"))
+  document.getElementById("trustPage").classList.remove("hidden")
+  renderTrustImages()
+}
+
+function showPage(page) {
   // Hide all pages
   document.querySelectorAll(".page-content").forEach((p) => p.classList.add("hidden"))
 
@@ -261,10 +340,6 @@ function switchPage(page) {
     case "settings":
       pageId = "settingsPage"
       loadSettings()
-      break
-    case "trust":
-      pageId = "trustPage"
-      renderTrustImages()
       break
   }
 
@@ -757,25 +832,26 @@ function saveSettings() {
 }
 
 function renderTrustImages() {
-  const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
-  const grid = document.getElementById("trustImagesGrid")
+  const gallery = document.getElementById("trustImagesGallery")
 
-  if (trustData.length === 0) {
-    grid.innerHTML =
-      '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><p>لا توجد صور ثقة - اضف صورة جديدة لكسب ثقة العملاء</p></div>'
+  if (trustImages.length === 0) {
+    gallery.innerHTML =
+      '<p style="text-align: center; color: var(--text-muted); padding: 40px;">لا توجد صور ثقة حتى الآن</p>'
     return
   }
 
-  grid.innerHTML = trustData
+  gallery.innerHTML = trustImages
     .map(
-      (item, idx) => `
+      (img, index) => `
     <div class="trust-image-card">
-      <img src="${item.image}" alt="${item.title}" class="trust-image-preview">
-      <div class="trust-image-info">
-        <div class="trust-image-title">${item.title}</div>
-        <div class="trust-image-desc">${item.description.substring(0, 60)}...</div>
-        <div class="trust-image-actions">
-          <button class="trust-delete-btn" onclick="deleteTrustImage(${idx})">حذف</button>
+      <img src="${img.image}" alt="${img.title}" class="trust-card-image">
+      <div class="trust-card-content">
+        <h3>${img.title}</h3>
+        <p>${img.description}</p>
+        <div class="trust-card-actions">
+          <button class="btn-danger" onclick="deleteTrustImage(${index})">
+            <i class="fas fa-trash"></i> حذف
+          </button>
         </div>
       </div>
     </div>
@@ -784,57 +860,12 @@ function renderTrustImages() {
     .join("")
 }
 
-function openTrustImageModal() {
-  document.getElementById("trustTitle").value = ""
-  document.getElementById("trustDescription").value = ""
-  document.getElementById("trustImageInput").value = ""
-  document.getElementById("trustImagePreview").style.display = "none"
-  document.getElementById("trustImageModal").classList.add("active")
-}
-
-function previewTrustImage(e) {
-  const file = e.target.files[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const preview = document.getElementById("trustImagePreview")
-      preview.src = event.target.result
-      preview.style.display = "block"
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-function saveTrustImage() {
-  const title = document.getElementById("trustTitle").value
-  const description = document.getElementById("trustDescription").value
-  const imagePreview = document.getElementById("trustImagePreview")
-
-  if (!title || !description || !imagePreview.src) {
-    alert("يرجى ملء جميع الحقول وإضافة صورة")
-    return
-  }
-
-  const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
-  trustData.push({
-    title,
-    description,
-    image: imagePreview.src,
-    date: new Date().toLocaleDateString("ar-SA"),
-  })
-
-  localStorage.setItem("admin_trust_images", JSON.stringify(trustData))
-  document.getElementById("trustImageModal").classList.remove("active")
-  renderTrustImages()
-  alert("تم إضافة صورة الثقة بنجاح")
-}
-
-function deleteTrustImage(idx) {
+function deleteTrustImage(index) {
   if (confirm("هل تريد حذف هذه الصورة؟")) {
-    const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
-    trustData.splice(idx, 1)
-    localStorage.setItem("admin_trust_images", JSON.stringify(trustData))
+    trustImages.splice(index, 1)
+    localStorage.setItem("trustImages", JSON.stringify(trustImages))
     renderTrustImages()
+    alert("تم حذف الصورة بنجاح")
   }
 }
 
