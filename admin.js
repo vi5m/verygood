@@ -17,6 +17,7 @@ let adminData = {
     storeName: "متجر الخدمات",
     storeDescription: "متجر متخصص في خدمات التواصل الاجتماعي",
     whatsapp: "",
+    whatsappChannel: "",
     telegram: "",
     email: "",
     instagram: "",
@@ -205,6 +206,10 @@ function setupEventListeners() {
   document.getElementById("cancelPaymentBtn")?.addEventListener("click", closePaymentModal)
   document.getElementById("savePaymentBtn")?.addEventListener("click", savePayment)
 
+  // Trust Image Modal listeners
+  document.getElementById("addTrustImageBtn")?.addEventListener("click", openTrustImageModal)
+  document.getElementById("trustImageInput")?.addEventListener("change", previewTrustImage)
+
   // Settings
   document.getElementById("saveSettingsBtn")?.addEventListener("click", saveSettings)
 
@@ -256,6 +261,10 @@ function switchPage(page) {
     case "settings":
       pageId = "settingsPage"
       loadSettings()
+      break
+    case "trust":
+      pageId = "trustPage"
+      renderTrustImages()
       break
   }
 
@@ -733,22 +742,100 @@ function deleteMessage(idx) {
 function loadSettings() {
   document.getElementById("storeName").value = adminData.settings.storeName
   document.getElementById("storeDescription").value = adminData.settings.storeDescription
-  document.getElementById("whatsappLink").value = adminData.settings.whatsapp
-  document.getElementById("telegramLink").value = adminData.settings.telegram
-  document.getElementById("emailLink").value = adminData.settings.email
-  document.getElementById("instagramLink").value = adminData.settings.instagram
+  document.getElementById("whatsappNumber").value = adminData.settings.whatsapp
+  document.getElementById("whatsappChannel").value = adminData.settings.whatsappChannel
 }
 
 function saveSettings() {
   adminData.settings.storeName = document.getElementById("storeName").value
   adminData.settings.storeDescription = document.getElementById("storeDescription").value
-  adminData.settings.whatsapp = document.getElementById("whatsappLink").value
-  adminData.settings.telegram = document.getElementById("telegramLink").value
-  adminData.settings.email = document.getElementById("emailLink").value
-  adminData.settings.instagram = document.getElementById("instagramLink").value
+  adminData.settings.whatsapp = document.getElementById("whatsappNumber").value
+  adminData.settings.whatsappChannel = document.getElementById("whatsappChannel").value
 
   saveDataToStorage()
   alert("تم حفظ الإعدادات بنجاح")
+}
+
+function renderTrustImages() {
+  const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
+  const grid = document.getElementById("trustImagesGrid")
+
+  if (trustData.length === 0) {
+    grid.innerHTML =
+      '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><p>لا توجد صور ثقة - اضف صورة جديدة لكسب ثقة العملاء</p></div>'
+    return
+  }
+
+  grid.innerHTML = trustData
+    .map(
+      (item, idx) => `
+    <div class="trust-image-card">
+      <img src="${item.image}" alt="${item.title}" class="trust-image-preview">
+      <div class="trust-image-info">
+        <div class="trust-image-title">${item.title}</div>
+        <div class="trust-image-desc">${item.description.substring(0, 60)}...</div>
+        <div class="trust-image-actions">
+          <button class="trust-delete-btn" onclick="deleteTrustImage(${idx})">حذف</button>
+        </div>
+      </div>
+    </div>
+  `,
+    )
+    .join("")
+}
+
+function openTrustImageModal() {
+  document.getElementById("trustTitle").value = ""
+  document.getElementById("trustDescription").value = ""
+  document.getElementById("trustImageInput").value = ""
+  document.getElementById("trustImagePreview").style.display = "none"
+  document.getElementById("trustImageModal").classList.add("active")
+}
+
+function previewTrustImage(e) {
+  const file = e.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const preview = document.getElementById("trustImagePreview")
+      preview.src = event.target.result
+      preview.style.display = "block"
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+function saveTrustImage() {
+  const title = document.getElementById("trustTitle").value
+  const description = document.getElementById("trustDescription").value
+  const imagePreview = document.getElementById("trustImagePreview")
+
+  if (!title || !description || !imagePreview.src) {
+    alert("يرجى ملء جميع الحقول وإضافة صورة")
+    return
+  }
+
+  const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
+  trustData.push({
+    title,
+    description,
+    image: imagePreview.src,
+    date: new Date().toLocaleDateString("ar-SA"),
+  })
+
+  localStorage.setItem("admin_trust_images", JSON.stringify(trustData))
+  document.getElementById("trustImageModal").classList.remove("active")
+  renderTrustImages()
+  alert("تم إضافة صورة الثقة بنجاح")
+}
+
+function deleteTrustImage(idx) {
+  if (confirm("هل تريد حذف هذه الصورة؟")) {
+    const trustData = JSON.parse(localStorage.getItem("admin_trust_images")) || []
+    trustData.splice(idx, 1)
+    localStorage.setItem("admin_trust_images", JSON.stringify(trustData))
+    renderTrustImages()
+  }
 }
 
 function initializeTheme() {

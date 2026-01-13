@@ -41,6 +41,10 @@
         <button class="nav-item" data-page="settings">
           <i class="fas fa-cog"></i> <span>الإعدادات</span>
         </button>
+        <!-- Added Trust Images management -->
+        <button class="nav-item" data-page="trust">
+          <i class="fas fa-images"></i> <span>صور الثقة</span>
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -213,50 +217,39 @@
         <div class="page-header">
           <h1>الإعدادات</h1>
         </div>
-        <div class="settings-container">
-          <div class="settings-section">
-            <h2>معلومات المتجر</h2>
-            <div class="form-group">
-              <label>اسم المتجر</label>
-              <input type="text" id="storeName" placeholder="اسم المتجر">
-            </div>
-            <div class="form-group">
-              <label>وصف المتجر</label>
-              <textarea id="storeDescription" placeholder="وصف المتجر"></textarea>
-            </div>
+        <div class="settings-form">
+          <div class="form-group">
+            <label>اسم المتجر</label>
+            <input type="text" id="storeName" placeholder="متجر فهد" value="متجر فهد">
           </div>
-
-          <div class="settings-section">
-            <h2>روابط التواصل</h2>
-            <div class="form-group">
-              <label>رابط WhatsApp</label>
-              <input type="text" id="whatsappLink" placeholder="https://wa.me/...">
-            </div>
-            <div class="form-group">
-              <label>رابط Telegram</label>
-              <input type="text" id="telegramLink" placeholder="https://t.me/...">
-            </div>
-            <div class="form-group">
-              <label>البريد الإلكتروني</label>
-              <input type="email" id="emailLink" placeholder="example@email.com">
-            </div>
-            <div class="form-group">
-              <label>رابط Instagram</label>
-              <input type="text" id="instagramLink" placeholder="https://instagram.com/...">
-            </div>
+          <div class="form-group">
+            <label>وصف المتجر</label>
+            <textarea id="storeDescription" placeholder="وصف المتجر"></textarea>
           </div>
-
-          <div class="settings-section">
-            <h2>العملات المدعومة</h2>
-            <div class="currency-checkboxes">
-              <label><input type="checkbox" value="SAR" checked> الريال السعودي (SAR)</label>
-              <label><input type="checkbox" value="AED" checked> الدرهم الإماراتي (AED)</label>
-              <label><input type="checkbox" value="USD" checked> الدولار الأمريكي (USD)</label>
-              <label><input type="checkbox" value="OMR" checked> الريال العماني (OMR)</label>
-            </div>
+          <div class="form-group">
+            <label>رابط قناة واتساب</label>
+            <input type="text" id="whatsappChannel" placeholder="https://whatsapp.com/channel/..." value="https://whatsapp.com/channel/0029VbCXW248qIzki3MIvE44">
           </div>
+          <div class="form-group">
+            <label>رقم الواتساب</label>
+            <input type="text" id="whatsappNumber" placeholder="+970594569011" value="+970594569011">
+          </div>
+          <button class="btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
+        </div>
+      </div>
 
-          <button class="btn-primary" id="saveSettingsBtn">حفظ الإعدادات</button>
+      <!-- Trust Images Page -->
+      <div class="page-content hidden" id="trustPage">
+        <div class="page-header">
+          <h1>إدارة صور الثقة</h1>
+          <button class="btn-primary" id="addTrustImageBtn">
+            <i class="fas fa-plus"></i> إضافة صورة
+          </button>
+        </div>
+        <div class="trust-management">
+          <div id="trustImagesGrid" class="trust-images-grid">
+            <!-- Trust images will be rendered here -->
+          </div>
         </div>
       </div>
     </div>
@@ -391,6 +384,30 @@
         <button class="btn-secondary" id="cancelPaymentBtn">إلغاء</button>
         <button class="btn-primary" id="savePaymentBtn">حفظ</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Trust Image Modal -->
+  <div id="trustImageModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>إضافة صورة ثقة</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>عنوان الصورة</label>
+        <input type="text" id="trustTitle" placeholder="مثال: عملية بيع ناجحة">
+      </div>
+      <div class="form-group">
+        <label>وصف الصورة</label>
+        <textarea id="trustDescription" placeholder="وصف العملية أو النتيجة"></textarea>
+      </div>
+      <div class="form-group">
+        <label>الصورة</label>
+        <input type="file" id="trustImageInput" accept="image/*">
+        <img id="trustImagePreview" style="max-width: 100%; margin-top: 10px; display: none;">
+      </div>
+      <button class="btn-primary" onclick="saveTrustImage()">حفظ الصورة</button>
     </div>
   </div>
 
