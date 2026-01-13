@@ -103,12 +103,27 @@
   </footer>
 
   <script>
-    // Load orders and display them
+    let customerEmail = "";
+
+    function initializeTracking() {
+      // Try to get customer email from the current session/cart
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length > 0 && localStorage.getItem("lastCustomerEmail")) {
+        customerEmail = localStorage.getItem("lastCustomerEmail");
+      }
+      loadOrders();
+    }
+
     function loadOrders() {
       const orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
       const ordersList = document.getElementById("ordersList");
 
-      if (orders.length === 0) {
+      let filteredOrders = orders;
+      if (customerEmail) {
+        filteredOrders = orders.filter((order) => order.email === customerEmail);
+      }
+
+      if (filteredOrders.length === 0) {
         ordersList.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
             <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
@@ -119,7 +134,7 @@
         return;
       }
 
-      ordersList.innerHTML = orders
+      ordersList.innerHTML = filteredOrders
         .map((order, index) => {
           const statusColors = {
             "قيد الانتظار": "#f39c12",
@@ -160,21 +175,25 @@
                   <strong>الهاتف:</strong> ${order.phone}
                 </p>
                 <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">
-                  <strong>طريقة الدفع:</strong> ${order.paymentMethod} ${order.paymentCode ? `(${order.paymentCode})` : ''}
+                  <strong>طريقة الدفع:</strong> ${order.paymentMethod} ${order.paymentCode ? `(${order.paymentCode})` : ""}
                 </p>
                 <p style="color: var(--text-secondary); font-size: 0.85rem;">
-                  <strong>الخدمات:</strong> ${order.items.map(item => item.name).join(", ")}
+                  <strong>الخدمات:</strong> ${order.items.map((item) => item.name).join(", ")}
                 </p>
               </div>
 
-              ${order.paymentProof ? `
+              ${
+                order.paymentProof
+                  ? `
                 <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
                   <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">
                     <i class="fas fa-image"></i> صورة الدفع
                   </p>
                   <img src="${order.paymentProof}" alt="صورة الدفع" style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" onclick="viewImage('${order.paymentProof}')">
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
 
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <button onclick="viewOrderDetails(${index})" style="padding: 0.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
@@ -193,10 +212,17 @@
     function filterOrders() {
       const searchInput = document.getElementById("searchInput").value.toLowerCase();
       const statusFilter = document.getElementById("statusFilter").value;
-      const orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
+      let orders = JSON.parse(localStorage.getItem("admin_orders")) || [];
 
-      const filtered = orders.filter(order => {
-        const matchSearch = order.email.includes(searchInput) || order.name.includes(searchInput);
+      if (customerEmail) {
+        orders = orders.filter((order) => order.email === customerEmail);
+      }
+
+      const filtered = orders.filter((order, index) => {
+        const matchSearch =
+          order.email.includes(searchInput) ||
+          order.name.includes(searchInput) ||
+          (index + 1).toString().includes(searchInput);
         const matchStatus = !statusFilter || order.status === statusFilter;
         return matchSearch && matchStatus;
       });
@@ -206,7 +232,7 @@
         ordersList.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
             <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
-            <p style="font-size: 1.1rem;">لم يتم العثور على طلبات</p>
+            <p style="font-size: 1.1rem;">لا توجد نتائج مطابقة</p>
           </div>
         `;
         return;
@@ -245,11 +271,11 @@
                 </div>
               </div>
               ${order.paymentProof ? `
-                <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px;">
+                <div style="background: var(--bg-dark); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
                   <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">
                     <i class="fas fa-image"></i> صورة الدفع
                   </p>
-                  <img src="${order.paymentProof}" alt="صورة الدفع" style="max-width: 300px; max-height: 300px; border-radius: 8px;">
+                  <img src="${order.paymentProof}" alt="صورة الدفع" style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" onclick="viewImage('${order.paymentProof}')">
                 </div>
               ` : ''}
             </div>
@@ -281,7 +307,7 @@
 التاريخ: ${new Date(order.date).toLocaleDateString("ar-SA")}
 الحالة: ${order.status}
 طريقة الدفع: ${order.paymentMethod}
-الخدمات: ${order.items.map(item => item.name).join(", ")}
+الخدمات: ${order.items.map((item) => item.name).join(", ")}
 المجموع: ${order.total} ${order.currency}
       `;
       const blob = new Blob([info], { type: "text/plain" });
@@ -321,7 +347,7 @@
 
     // Load on page load
     document.addEventListener("DOMContentLoaded", () => {
-      loadOrders();
+      initializeTracking();
       loadSettings();
     });
   </script>

@@ -190,6 +190,8 @@ function processOrder() {
 
   const cart = JSON.parse(localStorage.getItem("checkout_cart")) || JSON.parse(localStorage.getItem("cart")) || []
 
+  localStorage.setItem("lastCustomerEmail", email)
+
   const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
   const newOrder = {
     id: Date.now(),

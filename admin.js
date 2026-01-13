@@ -973,7 +973,7 @@ function saveTrustImage() {
   })
 
   localStorage.setItem("admin_data", JSON.stringify(adminData))
-  localStorage.setItem("admin_trust_images", JSON.stringify(adminData.trustImages))
+  localStorage.setItem("trustImages", JSON.stringify(adminData.trustImages))
 
   document.getElementById("trustImageTitle").value = ""
   document.getElementById("trustImageDescription").value = ""
