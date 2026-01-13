@@ -1059,7 +1059,7 @@
                         <i class="fas fa-credit-card"></i> طرق الدفع
                     </a>
                     <a href="#" data-page="contact" class="admin-menu-link"> <!-- New menu item -->
-                        <i class="fas fa-envelope"></i> الرسائل
+                        <i class="fas fa-envelope"></i>الرسائل
                     </a>
                     <a href="#" data-page="settings" class="admin-menu-link">
                         <i class="fas fa-sliders-h"></i> الإعدادات
@@ -1148,18 +1148,20 @@
                     <div id="products-page" class="admin-page"> <!-- New Page -->
                         <div class="section-header">
                             <div class="section-title">إدارة المنتجات</div>
-                            <button class="btn-add" onclick="openProductModal()">
-                                <i class="fas fa-plus"></i> منتج جديد
+                            <button type="button" class="btn-add" onclick="openProductModal()">
+                                <i class="fas fa-plus"></i> إضافة منتج
                             </button>
                         </div>
                         <div class="admin-table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
+                                        <th>الصورة</th>
                                         <th>اسم المنتج</th>
                                         <th>الفئة</th>
                                         <th>السعر</th>
                                         <th>المخزون</th>
+                                        <th>الوصف</th>
                                         <th>الإجراءات</th>
                                     </tr>
                                 </thead>
@@ -1267,42 +1269,36 @@
                     <!-- Settings Page -->
                     <div id="settings-page" class="admin-page"> <!-- Changed ID -->
                         <div class="section-title">الإعدادات</div>
-                        <div class="admin-table-container" style="padding: 2rem;"> <!-- Reused table container for settings -->
-                            <div class="form-group">
-                                <label>روابط التواصل</label>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                    <div>
-                                        <label style="font-size: 0.9rem;">WhatsApp</label>
-                                        <input type="text" id="whatsapp-link" placeholder="https://wa.me/...">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">Telegram</label>
-                                        <input type="text" id="telegram-link" placeholder="https://t.me/...">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">البريد الإلكتروني</label>
-                                        <input type="email" id="email-link" placeholder="email@example.com">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.9rem;">Instagram</label>
-                                        <input type="text" id="instagram-link" placeholder="https://instagram.com/...">
-                                    </div>
+                        <div class="admin-table-container" style="max-width: 600px;">
+                            <form id="settings-form" style="padding: 2rem;">
+                                <div class="form-group">
+                                    <label>اسم المتجر</label>
+                                    <input type="text" id="store-name" placeholder="اسم متجرك">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label>معلومات المتجر</label>
-                                <div>
-                                    <label style="font-size: 0.9rem;">اسم المتجر</label>
-                                    <input type="text" id="store-name" placeholder="اسم المتجر">
+                                <div class="form-group">
+                                    <label>وصف المتجر</label>
+                                    <textarea id="store-description" placeholder="وصف قصير عن متجرك"></textarea>
                                 </div>
-                                <div style="margin-top: 1rem;">
-                                    <label style="font-size: 0.9rem;">وصف المتجر</label>
-                                    <textarea id="store-description" placeholder="وصف المتجر" rows="3"></textarea>
+                                <div class="form-group">
+                                    <label>رابط WhatsApp</label>
+                                    <input type="url" id="whatsapp-link" placeholder="https://wa.me/...">
                                 </div>
-                            </div>
-                            <div class="form-actions">
-                                <button class="btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
-                            </div>
+                                <div class="form-group">
+                                    <label>رابط Telegram</label>
+                                    <input type="url" id="telegram-link" placeholder="https://t.me/...">
+                                </div>
+                                <div class="form-group">
+                                    <label>البريد الإلكتروني</label>
+                                    <input type="email" id="email-link" placeholder="your@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>حساب Instagram</label>
+                                    <input type="text" id="instagram-link" placeholder="@username">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary">حفظ الإعدادات</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -1311,48 +1307,12 @@
     </div>
 
     <!-- Modals -->
-    <!-- Product Modal -->
-    <div id="product-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>منتج جديد</span>
-                <button class="modal-close" onclick="closeModal('product-modal')">&times;</button>
-            </div>
-            <form id="product-form">
-                <div class="form-group">
-                    <label>اسم المنتج</label>
-                    <input type="text" id="product-name" required>
-                </div>
-                <div class="form-group">
-                    <label>الفئة</label>
-                    <input type="text" id="product-category" required>
-                </div>
-                <div class="form-group">
-                    <label>السعر</label>
-                    <input type="number" id="product-price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>المخزون</label>
-                    <input type="number" id="product-stock" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label>الوصف</label>
-                    <textarea id="product-description" rows="3"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('product-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ المنتج</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Service Modal -->
     <div id="service-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>خدمة جديدة</span>
-                <button class="modal-close" onclick="closeModal('service-modal')">&times;</button>
+                <span>إضافة/تعديل الخدمة</span>
+                <button type="button" class="modal-close" onclick="closeModal('service-modal')">&times;</button>
             </div>
             <form id="service-form">
                 <div class="form-group">
@@ -1380,11 +1340,61 @@
                 </div>
                 <div class="form-group">
                     <label>الوصف</label>
-                    <textarea id="service-description" rows="3"></textarea>
+                    <textarea id="service-description"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('service-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ الخدمة</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>إضافة/تعديل المنتج</span>
+                <button type="button" class="modal-close" onclick="closeModal('product-modal')">&times;</button>
+            </div>
+            <form id="product-form">
+                <div class="form-group">
+                    <label>صورة المنتج</label>
+                    <input type="file" id="product-image" accept="image/*">
+                    <img id="product-image-preview" style="display: none; width: 100%; margin-top: 1rem; border-radius: 8px; max-height: 200px; object-fit: cover;">
+                </div>
+                <div class="form-group">
+                    <label>اسم المنتج</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الفئة</label>
+                    <input type="text" id="product-category" required>
+                </div>
+                <div class="form-group">
+                    <label>السعر</label>
+                    <input type="number" id="product-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>العملة</label>
+                    <select id="product-currency" required>
+                        <option value="SAR">الريال السعودي (SAR)</option>
+                        <option value="AED">الدرهم الإماراتي (AED)</option>
+                        <option value="USD">الدولار الأمريكي (USD)</option>
+                        <option value="OMR">الريال العماني (OMR)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>المخزون</label>
+                    <input type="number" id="product-stock" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="product-description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('product-modal')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
@@ -1394,8 +1404,8 @@
     <div id="platform-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>منصة جديدة</span>
-                <button class="modal-close" onclick="closeModal('platform-modal')">&times;</button>
+                <span>إضافة منصة جديدة</span>
+                <button type="button" class="modal-close" onclick="closeModal('platform-modal')">&times;</button>
             </div>
             <form id="platform-form">
                 <div class="form-group">
@@ -1403,54 +1413,53 @@
                     <input type="text" id="platform-name" required>
                 </div>
                 <div class="form-group">
-                    <label>رمز Font Awesome</label>
-                    <input type="text" id="platform-icon" placeholder="fa-tiktok" required>
+                    <label>أيقونة Font Awesome</label>
+                    <input type="text" id="platform-icon" placeholder="مثال: fab fa-facebook" required>
                 </div>
                 <div class="form-group">
-                    <label>اللون الأساسي</label>
+                    <label>اللون</label>
                     <input type="color" id="platform-color" required>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('platform-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ المنصة</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Payment Method Modal -->
+    <!-- Payment Modal -->
     <div id="payment-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <span>طريقة دفع جديدة</span>
-                <button class="modal-close" onclick="closeModal('payment-modal')">&times;</button>
+                <span>إضافة طريقة دفع</span>
+                <button type="button" class="modal-close" onclick="closeModal('payment-modal')">&times;</button>
             </div>
             <form id="payment-form">
                 <div class="form-group">
-                    <label>اسم الطريقة</label>
+                    <label>اسم طريقة الدفع</label>
                     <input type="text" id="payment-name" required>
                 </div>
                 <div class="form-group">
-                    <label>رمز الدفع / الكود</label>
-                    <input type="text" id="payment-code" placeholder="مثال: LK123456" required>
+                    <label>كود الدفع</label>
+                    <input type="text" id="payment-code" placeholder="مثال: LIKECARD-001" required>
                 </div>
                 <div class="form-group">
                     <label>نوع الدفع</label>
                     <select id="payment-type" required>
-                        <option value="">اختر النوع</option>
-                        <option value="card">بطاقة ائتمان</option>
-                        <option value="wallet">محفظة رقمية</option>
-                        <option value="bank">تحويل بنكي</option>
-                        <option value="crypto">عملات رقمية</option>
+                        <option value="بطاقة">بطاقة (Like Card)</option>
+                        <option value="تحويل بنكي">تحويل بنكي</option>
+                        <option value="محفظة رقمية">محفظة رقمية</option>
+                        <option value="عملة رقمية">عملة رقمية</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>معلومات إضافية</label>
-                    <textarea id="payment-info" placeholder="معلومات الحساب أو البيانات الإضافية" rows="3"></textarea>
+                    <textarea id="payment-info" placeholder="مثال: رقم الحساب أو رابط المحفظة"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('payment-modal')">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ الطريقة</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
                 </div>
             </form>
         </div>
