@@ -61,6 +61,36 @@
           <p style="font-size: 0.9rem; margin-top: 0.5rem;">سيتم عرض صور العمليات الناجحة هنا قريباً</p>
         </div>
       </div>
+
+      <!-- Add trust image upload section -->
+      <div style="margin-top: 4rem; padding: 2rem; background: var(--border-color); border-radius: 15px; border: 1px solid var(--border-color);">
+        <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);">
+          <i class="fas fa-plus"></i> إضافة صورة ثقة جديدة
+        </h3>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">عنوان الصورة</label>
+          <input type="text" id="trustTitle" placeholder="مثال: عملية شراء متابعين" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">وصف الصورة</label>
+          <textarea id="trustDescription" placeholder="أضف وصفاً للعملية" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark); resize: vertical; min-height: 80px;"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">الصورة</label>
+          <input type="file" id="trustImageFile" accept="image/*" style="display: none;">
+          <button onclick="document.getElementById('trustImageFile').click()" type="button" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+            <i class="fas fa-upload"></i> اختر صورة
+          </button>
+          <div id="trustImagePreview" style="margin-top: 1rem; text-align: center;"></div>
+        </div>
+
+        <button onclick="addTrustImageFromPage()" type="button" style="width: 100%; padding: 0.75rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+          <i class="fas fa-save"></i> حفظ الصورة
+        </button>
+      </div>
     </section>
 
     <!-- WhatsApp Channel Section -->
@@ -194,6 +224,33 @@
       loadTrustImages()
       loadSettings()
     })
+
+    // Function to add trust image from page
+    function addTrustImageFromPage() {
+      const title = document.getElementById("trustTitle").value
+      const description = document.getElementById("trustDescription").value
+      const imageFile = document.getElementById("trustImageFile").files[0]
+
+      if (!title || !description || !imageFile) {
+        alert("يرجى ملء جميع الحقول")
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = function(e) {
+        const trustImages = JSON.parse(localStorage.getItem("trustImages")) || []
+        const newImage = {
+          title: title,
+          description: description,
+          image: e.target.result,
+          date: new Date().toLocaleDateString()
+        }
+        trustImages.push(newImage)
+        localStorage.setItem("trustImages", JSON.stringify(trustImages))
+        loadTrustImages()
+      }
+      reader.readAsDataURL(imageFile)
+    }
   </script>
 </body>
 </html>

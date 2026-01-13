@@ -141,6 +141,9 @@ function loadDataFromStorage() {
   } else {
     initializeDefaultData()
   }
+
+  const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
+  adminData.orders = orders
 }
 
 function initializeDefaultData() {
@@ -296,14 +299,15 @@ function renderOrders() {
       (order) => `
     <tr>
       <td>#${order.id}</td>
-      <td>${order.customerName}</td>
-      <td>${order.serviceName}</td>
-      <td>${order.price} ${order.currency}</td>
+      <td>${order.name || order.customerName}</td>
+      <td>${order.items ? order.items.map((i) => i.name).join(", ") : order.serviceName}</td>
+      <td>${order.total || order.price} ${order.currency}</td>
       <td>
         <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
           <option value="pending" ${order.status === "pending" ? "selected" : ""}>معلق</option>
           <option value="approved" ${order.status === "approved" ? "selected" : ""}>موافق عليه</option>
           <option value="rejected" ${order.status === "rejected" ? "selected" : ""}>مرفوض</option>
+          <option value="waiting" ${order.status === "waiting" ? "selected" : ""}>انتظار الدفع</option>
         </select>
       </td>
       <td>
@@ -319,7 +323,8 @@ function updateOrderStatus(orderId, status) {
   const order = adminData.orders.find((o) => o.id === orderId)
   if (order) {
     order.status = status
-    saveDataToStorage()
+    // Save back to localStorage
+    localStorage.setItem("admin_orders", JSON.stringify(adminData.orders))
     renderOrders()
   }
 }
@@ -327,7 +332,7 @@ function updateOrderStatus(orderId, status) {
 function deleteOrder(orderId) {
   if (confirm("هل تريد حذف هذا الطلب؟")) {
     adminData.orders = adminData.orders.filter((o) => o.id !== orderId)
-    saveDataToStorage()
+    localStorage.setItem("admin_orders", JSON.stringify(adminData.orders))
     renderOrders()
   }
 }
@@ -652,9 +657,10 @@ function renderPayments() {
       (payment) => `
     <tr>
       <td>${payment.name}</td>
-      <td>${payment.code}</td>
+      <td><code style="background: var(--bg-darker); padding: 5px 10px; border-radius: 5px; color: var(--primary-color);">${payment.code}</code></td>
       <td>${payment.type}</td>
       <td>
+        <button class="btn-small" onclick="editPayment('${payment.id}')">تعديل</button>
         <button class="btn-small btn-danger" onclick="deletePayment('${payment.id}')">حذف</button>
       </td>
     </tr>
@@ -675,22 +681,47 @@ function closePaymentModal() {
   document.getElementById("paymentModal").classList.add("hidden")
 }
 
+function editPayment(paymentId) {
+  const payment = adminData.payments.find((p) => p.id === paymentId)
+  if (!payment) return
+
+  document.getElementById("paymentName").value = payment.name
+  document.getElementById("paymentCode").value = payment.code
+  document.getElementById("paymentType").value = payment.type
+
+  // Store the ID being edited
+  document.getElementById("paymentModal").dataset.editId = paymentId
+  document.getElementById("paymentModal").classList.remove("hidden")
+}
+
 function savePayment() {
   const name = document.getElementById("paymentName").value
   const code = document.getElementById("paymentCode").value
   const type = document.getElementById("paymentType").value
+  const editId = document.getElementById("paymentModal").dataset.editId
 
   if (!name || !code) {
     alert("يرجى ملء جميع الحقول")
     return
   }
 
-  adminData.payments.push({
-    id: "py" + Date.now(),
-    name,
-    code,
-    type,
-  })
+  if (editId) {
+    const payment = adminData.payments.find((p) => p.id === editId)
+    if (payment) {
+      payment.name = name
+      payment.code = code
+      payment.type = type
+    }
+    document.getElementById("paymentModal").dataset.editId = ""
+  } else {
+    // Add new payment method
+    adminData.payments.push({
+      id: "py" + Date.now(),
+      name,
+      code,
+      type,
+    })
+  }
 
   saveDataToStorage()
   renderPayments()
@@ -1008,6 +1039,7 @@ const adminStyles = `
   border: 1px solid var(--border-color);
   color: var(--text-dark);
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .services-grid, .products-grid, .platforms-grid {

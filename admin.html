@@ -187,6 +187,20 @@
             </tbody>
           </table>
         </div>
+        <!-- Payments Section -->
+        <div id="payments-section" style="display: none;">
+          <h2>إدارة طرق الدفع</h2>
+          
+          <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <button onclick="openPaymentModal()" class="btn-primary">
+              <i class="fas fa-plus"></i> إضافة طريقة دفع
+            </button>
+          </div>
+
+          <div id="paymentsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+            <!-- Payment methods will be rendered here -->
+          </div>
+        </div>
       </div>
 
       <!-- Messages Page -->

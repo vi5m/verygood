@@ -1,4 +1,5 @@
 let selectedCurrency = "SAR"
+let selectedPaymentMethod = null
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeCheckout()
@@ -8,6 +9,7 @@ function initializeCheckout() {
   initializeTheme()
   setupCurrencySelector()
   setupFormHandlers()
+  renderPaymentMethods()
   renderOrderSummary()
   updateSummary()
 }
@@ -92,6 +94,40 @@ function validateEmail(email) {
   return re.test(email)
 }
 
+function renderPaymentMethods() {
+  const adminData = JSON.parse(localStorage.getItem("admin_data")) || {}
+  const payments = adminData.payments || []
+  const container = document.getElementById("paymentMethods")
+
+  if (payments.length === 0) {
+    container.innerHTML = '<p style="color: var(--text-secondary);">لا توجد طرق دفع متاحة</p>'
+    return
+  }
+
+  container.innerHTML = payments
+    .map(
+      (payment) => `
+    <div class="payment-option">
+      <input type="radio" name="payment" value="${payment.id}" onchange="selectPaymentMethod('${payment.id}', '${payment.code}', '${payment.name}')">
+      <div style="flex: 1;">
+        <strong>${payment.name}</strong>
+        <br>
+        <small style="color: var(--primary-color); font-weight: 600;">الكود: ${payment.code}</small>
+      </div>
+    </div>
+  `,
+    )
+    .join("")
+}
+
+function selectPaymentMethod(id, code, name) {
+  selectedPaymentMethod = {
+    id: id,
+    code: code,
+    name: name,
+  }
+}
+
 function renderOrderSummary() {
   const summaryItems = document.getElementById("summary-items")
   const cart = JSON.parse(localStorage.getItem("checkout_cart")) || JSON.parse(localStorage.getItem("cart")) || []
@@ -147,143 +183,144 @@ function updateSummary() {
 }
 
 function processOrder() {
+  const name = document.getElementById("name").value.trim()
+  const email = document.getElementById("email").value.trim()
+  const phone = document.getElementById("phone").value.trim()
+  const country = document.getElementById("country").value.trim()
+
   const cart = JSON.parse(localStorage.getItem("checkout_cart")) || JSON.parse(localStorage.getItem("cart")) || []
-  const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || "like-card"
 
-  const formData = {
-    id: "ORD-" + Date.now(),
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    country: document.getElementById("country").value,
-    currency: selectedCurrency,
-    paymentMethod: paymentMethod,
-    notes: document.getElementById("notes").value,
+  const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
+  const newOrder = {
+    id: Date.now(),
+    name,
+    email,
+    phone,
+    country,
     items: cart,
-    serviceName: cart.length > 0 ? cart[0].name : "خدمة",
-    quantity: cart.length,
-    total: Number.parseFloat(document.getElementById("summary-total").textContent),
-    date: new Date().toISOString(),
-    status: "pending",
+    paymentMethod: selectedPaymentMethod?.name || "غير محدد",
+    paymentCode: selectedPaymentMethod?.code || "",
+    total: calculateTotal(),
+    currency: selectedCurrency,
+    status: "waiting",
+    date: new Date().toLocaleString("ar-SA"),
+    paymentProof: null,
   }
 
-  const adminOrders = JSON.parse(localStorage.getItem("admin_orders")) || []
-  adminOrders.push(formData)
-  localStorage.setItem("admin_orders", JSON.stringify(adminOrders))
+  orders.push(newOrder)
+  localStorage.setItem("admin_orders", JSON.stringify(orders))
 
-  // Clear checkout cart
-  localStorage.removeItem("checkout_cart")
-  localStorage.setItem("cart", JSON.stringify([]))
-
-  console.log("[v0] Order processed and saved:", formData.id)
-  showSuccessPage(formData)
+  showOrderSuccess(newOrder.id)
 }
 
-function showSuccessPage(order) {
-  const successDiv = document.createElement("div")
-  successDiv.style.cssText = `
-    text-align: center;
-    padding: 3rem;
-    background: var(--border-color);
-    border-radius: 15px;
-    margin: 2rem auto;
-    max-width: 600px;
-    animation: slideIn 0.5s ease-out;
-  `
+function showOrderSuccess(orderId) {
+  const checkoutForm = document.getElementById("checkout-form")
+  const summarySection = document.querySelector(".checkout-summary")
 
-  const paymentMethodText = order.paymentMethod === "like-card" ? "Like Card" : "تحويل بنكي"
+  if (checkoutForm) checkoutForm.style.display = "none"
+  if (summarySection) summarySection.style.display = "none"
 
-  successDiv.innerHTML = `
-    <div style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;">
-      <i class="fas fa-check-circle"></i>
-    </div>
-    <h2 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 2rem;">
-      تم استقبال طلبك بنجاح!
-    </h2>
-    <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">
-      سيتم التواصل معك قريباً على رقمك <strong>${order.phone}</strong>
-    </p>
-
-    <div style="background: var(--bg-dark); padding: 2rem; border-radius: 10px; margin: 2rem 0; text-align: right; border-left: 4px solid var(--primary-color);">
-      <div style="margin-bottom: 1rem;">
-        <strong style="color: var(--primary-color);">رقم الطلب:</strong>
-        <span style="color: var(--text-dark); margin-right: 0.5rem;">${order.id}</span>
+  const successContainer = document.getElementById("success-container") || createSuccessContainer()
+  successContainer.style.display = "block"
+  successContainer.innerHTML = `
+    <div class="success-message">
+      <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+      <h2>تم استلام طلبك بنجاح!</h2>
+      <p>رقم الطلب: <strong style="color: var(--primary-color); font-size: 1.2rem;">#${orderId}</strong></p>
+      <p style="margin-top: 1rem; color: var(--text-secondary);">يرجى رفع صورة عملية الدفع لتأكيد الطلب</p>
+      
+      <div class="payment-proof-upload" style="margin-top: 2rem; padding: 2rem; background: var(--border-color); border-radius: 10px; border: 2px dashed var(--primary-color);">
+        <input type="file" id="paymentProofFile" accept="image/*" style="display: none;">
+        <button onclick="document.getElementById('paymentProofFile').click()" class="btn-primary" style="width: 100%; margin-bottom: 1rem;">
+          <i class="fas fa-upload"></i> رفع صورة عملية الدفع
+        </button>
+        <div id="proofPreview" style="margin-top: 1rem; text-align: center;">
+          <p style="color: var(--text-secondary);">لم يتم رفع صورة</p>
+        </div>
+        <button onclick="completeOrder(${orderId})" class="btn-success" style="width: 100%; margin-top: 1rem; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+          <i class="fas fa-check"></i> إتمام الطلب
+        </button>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <strong style="color: var(--primary-color);">البريد الإلكتروني:</strong>
-        <span style="color: var(--text-dark); margin-right: 0.5rem;">${order.email}</span>
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <strong style="color: var(--primary-color);">طريقة الدفع:</strong>
-        <span style="color: var(--text-dark); margin-right: 0.5rem;">${paymentMethodText}</span>
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <strong style="color: var(--primary-color);">المبلغ الإجمالي:</strong>
-        <span style="color: var(--text-dark); margin-right: 0.5rem;">${order.total.toFixed(2)} ${order.currency}</span>
-      </div>
-      <div>
-        <strong style="color: var(--primary-color);">عدد الخدمات:</strong>
-        <span style="color: var(--text-dark); margin-right: 0.5rem;">${order.items.length}</span>
-      </div>
-    </div>
-
-    <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
-      <p style="color: var(--success); margin: 0;">
-        <i class="fas fa-check"></i> تم حفظ الطلب بنجاح
-      </p>
-    </div>
-
-    <p style="color: var(--text-secondary); margin: 1.5rem 0;">
-      <i class="fas fa-info-circle"></i> تحقق من بريدك الإلكتروني للحصول على تفاصيل الطلب
-    </p>
-
-    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
-      <button onclick="window.location.href='index.html'" style="
-        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-        color: var(--bg-dark);
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 0.95rem;
-        transition: all 0.3s;
-      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-        <i class="fas fa-home"></i> العودة للرئيسية
-      </button>
-      <button onclick="shareOrder('${order.id}')" style="
-        background: var(--secondary-color);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 0.95rem;
-        transition: all 0.3s;
-      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-        <i class="fas fa-share"></i> مشاركة
+      
+      <button onclick="location.href='index.html'" class="btn-secondary" style="margin-top: 2rem; width: 100%;">
+        العودة للمتجر
       </button>
     </div>
   `
 
-  const container = document.querySelector(".checkout-container")
-  if (container && container.parentNode) {
-    container.style.display = "none"
-    container.parentNode.insertBefore(successDiv, container)
-  }
+  const fileInput = document.getElementById("paymentProofFile")
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const previewDiv = document.getElementById("proofPreview")
+        previewDiv.innerHTML = `
+          <img src="${event.target.result}" style="max-width: 200px; border-radius: 8px; margin-bottom: 1rem;">
+          <p style="color: var(--primary-color);">تم رفع الصورة بنجاح</p>
+        `
+        // Store the proof image
+        localStorage.setItem(`order_proof_${orderId}`, event.target.result)
+      }
+    }
+  })
 }
 
-function shareOrder(orderId) {
-  const text = `تم إنشاء طلبي برقم ${orderId} بنجاح! 🎉\n\nمن متجر الخدمات: https://example.com`
-  if (navigator.share) {
-    navigator.share({
-      title: "طلب جديد",
-      text: text,
-    })
-  } else {
-    showCheckoutNotification("تم النسخ إلى الحافظة", "success")
+function createSuccessContainer() {
+  const container = document.createElement("div")
+  container.id = "success-container"
+  container.style.cssText =
+    "padding: 3rem; text-align: center; background: var(--border-color); border-radius: 15px; margin: 2rem 0;"
+  document
+    .querySelector(".checkout-container")
+    .parentElement.insertBefore(container, document.querySelector(".checkout-container"))
+  return container
+}
+
+function completeOrder(orderId) {
+  const proof = localStorage.getItem(`order_proof_${orderId}`)
+
+  if (!proof) {
+    showCheckoutNotification("يرجى رفع صورة عملية الدفع", "error")
+    return
   }
+
+  // Update order with proof
+  const orders = JSON.parse(localStorage.getItem("admin_orders")) || []
+  const orderIndex = orders.findIndex((o) => o.id === orderId)
+
+  if (orderIndex !== -1) {
+    orders[orderIndex].paymentProof = proof
+    orders[orderIndex].status = "pending"
+    localStorage.setItem("admin_orders", JSON.stringify(orders))
+  }
+
+  showCheckoutNotification("شكراً! تم إرسال طلبك وصورة العملية بنجاح", "success")
+  setTimeout(() => (location.href = "index.html"), 2000)
+}
+
+function calculateTotal() {
+  const cart = JSON.parse(localStorage.getItem("checkout_cart")) || JSON.parse(localStorage.getItem("cart")) || []
+  let total = 0
+
+  const conversionRates = {
+    SAR: 1,
+    AED: 0.98,
+    USD: 0.266,
+    OMR: 0.103,
+  }
+
+  cart.forEach((item) => {
+    const basePrice = item.price
+    const baseCurrency = item.currency || "SAR"
+    const baseCurrencyRate = conversionRates[baseCurrency] || 1
+    const targetRate = conversionRates[selectedCurrency] || 1
+
+    const convertedPrice = (basePrice * targetRate) / baseCurrencyRate
+    total += convertedPrice * item.quantity
+  })
+
+  return total
 }
 
 function showCheckoutNotification(message, type = "success") {
