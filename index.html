@@ -7,9 +7,6 @@
     <title>متجر فهد - خدمات الوسائط الاجتماعية</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Added Google Sign-In API -->
-    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -30,20 +27,6 @@
                 <li><a href="trust.html" class="nav-link">الثقة والعمليات</a></li>
             </ul>
             <div class="nav-actions">
-                <!-- Added user account dropdown -->
-                <div id="user-account" class="user-account hidden">
-                    <div class="user-info">
-                        <img id="user-photo" alt="User" class="user-photo">
-                        <div class="user-details">
-                            <p id="user-name" class="user-name"></p>
-                            <p id="user-email" class="user-email"></p>
-                        </div>
-                    </div>
-                    <button id="logout-btn" class="logout-btn">تسجيل الخروج</button>
-                </div>
-                <div id="login-container" class="login-container">
-                    <div id="google-signin-button"></div>
-                </div>
                 <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
                     <i class="fas fa-moon"></i>
                 </button>
